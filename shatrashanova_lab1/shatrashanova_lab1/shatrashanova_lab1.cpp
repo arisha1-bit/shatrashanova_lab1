@@ -33,6 +33,17 @@ float check_cin(float x)
     }
     return x;
 }
+int check_status_cin(int x)
+{
+    while ((x > 2) || (!x) || (x < 0)) {
+        cout << "Error!!! Input numeric value (1 or 2)" << endl;
+        cin.clear();
+        cin.ignore(INT_MAX, '\n');
+        cin >> x;
+    } 
+    return x;
+}
+
 int main()
 {
     int option = -1;
@@ -52,13 +63,9 @@ int main()
             check_cin(p.diameter);
             cout << "\nChoose status of pipe (1 if repairing, 2 if works) ";
             cin >> p.status;
-            while ((p.status > 2) || (!p.status) || (p.status < 0)) {
-            cout << "Error!!! Input numeric value (1 or 2)" << endl;
-            cin.clear();
-            cin.ignore(INT_MAX, '\n');
-            cin >> p.status;
+            check_status_cin(p.status);
+            cout << status_check(p.status) << endl;
         }
-        cout << status_check(p.status) << endl;
     }
     if (option == 2) {
         cout << "\nInput name ";
