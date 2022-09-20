@@ -12,7 +12,7 @@ struct Pipe
 struct CS
 {
     string name="";
-    int  workshop = 0, working_workshop = -1, change_cs = 0;
+    int  workshop = -1, working_workshop = -1, change_cs = 0;
     float effectiveness = 0;
 
 };
@@ -28,33 +28,26 @@ int main()
         if (option == 1) {
             cout << "\nInput lenght ";
             cin >> p.lenght;
-            if (!p.lenght) {
-                do {
-                    cout << "Error!!! Input numeric value" << endl;
+            while ((!p.lenght) || (p.lenght<=0)) {
+                    cout << "Error!!! Input numeric value > 0" << endl;
                     cin.clear();
                     cin.ignore(INT_MAX, '\n');
-                    cin >> p.lenght;
-                } while (!p.lenght);
-            }
+                    cin >> p.lenght;}
             cout << "\nInput diameter ";
             cin >> p.diameter;
-            if (!p.diameter) {
-                do {
+            while ((!p.diameter) || (p.diameter<=0)) {
                     cout << "Error!!! Input numeric value" << endl;
                     cin.clear();
                     cin.ignore(INT_MAX, '\n');
                     cin >> p.diameter;
-                } while (!p.diameter);
             }
             cout << "\nChoose status of pipe (1 if repairing, 2 if works) ";
             cin >> p.status;
-            if ((p.status>2) || (!p.status) || (p.status<0)) {
-                do {
+            while ((p.status>2) || (!p.status) || (p.status<0)) {
                     cout << "Error!!! Input numeric value (1 or 2)" << endl;
                     cin.clear();
                     cin.ignore(INT_MAX, '\n');
                     cin >> p.status;
-                } while ((p.status > 2) || (!p.status) || (p.status<0));
             }
             if (p.status == 1) {
                 cout << "\nPipe is repairing\n"<<endl;
@@ -68,10 +61,22 @@ int main()
             cin >> cs.name;
             cout << "\nNumber of workshops ";
             cin >> cs.workshop;
+            while ((!cs.workshop) || (cs.workshop <= 0)) {
+                    cout << "Error!!! Input numeric value > 0" << endl;
+                    cin.clear();
+                    cin.ignore(INT_MAX, '\n');
+                    cin >> cs.workshop;
+            }
             cout << "\nNumber of working workshops ";
             cin >> cs.working_workshop;
-            cout << "\nInput effectiveness ";
-            cin >> cs.effectiveness;
+            while ((cs.working_workshop > cs.workshop) || (!cs.working_workshop) || (cs.working_workshop <= 0)) {
+                    cout << "Error!!! Input numeric value > 0 and not more than workshops" << endl;
+                    cin.clear();
+                    cin.ignore(INT_MAX, '\n');
+                    cin >> cs.working_workshop;
+            }
+            cs.effectiveness = float(cs.workshop) / float(cs.working_workshop);
+            cout << "\nEffectiveness: " << cs.effectiveness << endl;
         }
         if (option == 3) {
             cout << "\nPipe info:\nLenght: " << p.lenght << "\nDiameter: " << p.diameter;
@@ -160,15 +165,12 @@ int main()
                 if (cs.change_cs == 6)
                     cout << "\Changing was canceled" << endl;
             }
-
         }
         if (option == 0) {
             return 0;
         }
-
         system("pause");
     }
-
     return 0;
 }
 
