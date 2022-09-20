@@ -1,0 +1,13 @@
+
+Pipe info:
+Lenght: 3
+Diameter: 3
+Status: Pipe is repairing
+
+CS info:
+Name: ere
+Number of workshops: 3
+Number of working workshops: 2
+Effectiveness: 1.5
+
+
