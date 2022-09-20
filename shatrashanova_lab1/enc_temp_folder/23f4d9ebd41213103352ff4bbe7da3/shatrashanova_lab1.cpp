@@ -62,6 +62,7 @@ int main()
     int option = -1;
     Pipe p;
     CS cs;
+
     while (option) {
         cout << "\nChoose option:\n 1.Add pipe 2.Add CS 3.View all objects " <<
             "4.Edit pipe 5.Edit CS 6.Save 7.Load 0.Exit\n";
