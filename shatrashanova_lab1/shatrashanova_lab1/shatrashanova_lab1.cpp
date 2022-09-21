@@ -1,5 +1,6 @@
 ﻿#include <iostream>
 #include <fstream>
+#include <string>
 using namespace std;
 struct Pipe
 {
@@ -55,6 +56,7 @@ int check_workshop_cin(int x, int y)
     return x;
 }
 int main()
+
 {
     int option = -1;
     Pipe p;
@@ -86,8 +88,8 @@ int main()
             cout << "\nNumber of working workshops ";
             cin >> cs.working_workshop;
             cs.working_workshop = check_workshop_cin(cs.working_workshop, cs.workshop);
-            cs.effectiveness = float(cs.workshop) / float(cs.working_workshop);
-            cout << "\nEffectiveness: " << cs.effectiveness << endl;
+            cs.effectiveness = float(cs.working_workshop) / float(cs.workshop)*100;
+            cout << "\nEffectiveness: " << cs.effectiveness <<"%"<< endl;
             break;
         }
             case 3: {
@@ -95,7 +97,7 @@ int main()
                 << "\nStatus: " << status_check(p.status) << endl;;
             cout << "\n\nCS info:\nName: " << cs.name << "\nNumber of workshops: " << cs.workshop
                 << "\nNumber of working workshops: " << cs.working_workshop << "\nEffectiveness: "
-                << cs.effectiveness << "\n\n\n";
+                << cs.effectiveness << "%"<<endl;
             break;
         }
             case 4: {
@@ -116,22 +118,42 @@ int main()
                 cout << "Input new number of working workshops: " << endl;
                 cin >> cs.working_workshop;
                 cs.working_workshop = check_workshop_cin(cs.working_workshop, cs.workshop);
-                cs.effectiveness = float(cs.workshop) / float(cs.working_workshop);
-                cout << "\nEffectiveness: " << cs.effectiveness << endl;
+                cs.effectiveness = (float(cs.working_workshop) / float(cs.workshop))*100;
+                cout << "\nEffectiveness: " << cs.effectiveness <<"%"<<endl;
             }
             break;
         }
             case 6: {
                 ofstream file;
                 file.open("saved_information.txt");
-                file << "\nPipe info:\nLenght: " << p.lenght << "\nDiameter: " << p.diameter 
-                    << "\nStatus: " << status_check(p.status) << "\n\nCS info:\nName: " << cs.name
-                    << "\nNumber of workshops: " << cs.workshop << "\nNumber of working workshops: " 
-                    << cs.working_workshop << "\nEffectiveness: " << cs.effectiveness << "\n\n\n";
+                file << p.lenght << endl << p.diameter << endl << p.status << endl << cs.name << endl
+                    << cs.workshop << endl << cs.working_workshop << endl << cs.effectiveness << "%" 
+                    << endl;
                 file.close();
                 break;
             }
-            case 7: break;
+            case 7: { 
+                ifstream file2;
+                string line;
+                file2.open("saved_information.txt");
+                getline(file2, line);
+                p.lenght = stoi(line);
+                getline(file2, line);
+                p.diameter = stoi(line);
+                getline(file2, line);
+                p.status = stoi(line);
+                getline(file2, line);
+                cs.name = line;
+                getline(file2, line);
+                cs.workshop = stoi(line);
+                getline(file2, line);
+                cs.working_workshop = stoi(line);
+                getline(file2, line);
+                cs.effectiveness = stod(line);
+                break;
+            }
+                    
+
             case 0: {
             return 0;
         }
