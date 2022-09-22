@@ -157,6 +157,8 @@ int main()
             case 0: {
             return 0;
         }
+            default: cout << "Input correct number (1-7)";
+                break;
         }
     }
     return 0;
