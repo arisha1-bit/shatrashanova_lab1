@@ -68,7 +68,7 @@ float check_workshop_cin(float x, float y)
 int check_option(int x)
 {
     while (!x) {
-        cout <<  "Input correct number (1-7)" << endl;
+        cout <<  "Input correct number (1-8)" << endl;
         cin.clear();
         cin.ignore(INT_MAX, '\n');
         cin >> x;
@@ -84,7 +84,7 @@ int main()
 
     while (option) {
         cout << "\nChoose option:\n 1.Add pipe 2.Add CS 3.View all objects " <<
-            "4.Edit pipe 5.Edit CS 6.Save 7.Load 0.Exit\n";
+            "4.Edit pipe 5.Edit CS 6.Save 7.Load 8.Exit\n";
         cin >> option;
         option = check_option(option);
         switch (option) {
@@ -103,7 +103,9 @@ int main()
         }
             case 2: {
             cout << "\nInput name ";
-            cin >> cs.name;
+            cin.clear();
+            cin.ignore(INT_MAX, '\n');
+            getline(cin, cs.name);
             cout << "\nNumber of workshops ";
             cin >> cs.workshop;
             cs.workshop = check_shop(cs.workshop);
@@ -159,9 +161,9 @@ int main()
                 string line;
                 file2.open("saved_information.txt");
                 getline(file2, line);
-                p.lenght = stoi(line);
+                p.lenght = stof(line);
                 getline(file2, line);
-                p.diameter = stoi(line);
+                p.diameter = stof(line);
                 getline(file2, line);
                 p.status = stoi(line);
                 getline(file2, line);
@@ -174,10 +176,10 @@ int main()
                 cs.effectiveness = stod(line);
                 break;
             }
-            case 0: {
+            case 8: {
             return 0;
         }
-            default: cout << "Input correct number (1-7)";
+            default: cout << "Input correct number (1-8)";
                 break;        }
     }
     return 0;
