@@ -11,7 +11,7 @@ struct Pipe
 struct CS
 {
     string name = "";
-    int  workshop = -1, working_workshop = -1, change_cs = 0;
+    float  workshop = -1, working_workshop = -1, change_cs = 0;
     float effectiveness = 0;
 };
 string status_check(int x)
@@ -35,6 +35,16 @@ float check_cin(float x)
     }
     return x;
 }
+float check_shop(float x)
+{
+    while ((!x) || (x <= 0) || (x-floor(x)!=0)) {
+        cout << "Error!!! Input integer numeric value > 0" << endl;
+        cin.clear();
+        cin.ignore(INT_MAX, '\n');
+        cin >> x;
+    }
+    return x;
+}
 int check_status_cin(int x)
 {
     while ((x > 2) || (!x) || (x < 0)) {
@@ -45,10 +55,10 @@ int check_status_cin(int x)
     } 
     return x;
 }
-int check_workshop_cin(int x, int y)
+float check_workshop_cin(float x, float y)
 {
-    while ((x > y) || (!x) || (x <= 0)) {
-        cout << "Error!!! Input numeric value > 0 and not more than workshops" << endl;
+    while ((x > y) || (!x) || (x <= 0) || (x - floor(x) != 0)) {
+        cout << "Error!!! Input integer numeric value > 0 and not more than workshops" << endl;
         cin.clear();
         cin.ignore(INT_MAX, '\n');
         cin >> x;
@@ -84,7 +94,7 @@ int main()
             cin >> cs.name;
             cout << "\nNumber of workshops ";
             cin >> cs.workshop;
-            cs.workshop = check_cin(cs.workshop);
+            cs.workshop = check_shop(cs.workshop);
             cout << "\nNumber of working workshops ";
             cin >> cs.working_workshop;
             cs.working_workshop = check_workshop_cin(cs.working_workshop, cs.workshop);
@@ -158,8 +168,7 @@ int main()
             return 0;
         }
             default: cout << "Input correct number (1-7)";
-                break;
-        }
+                break;        }
     }
     return 0;
 }
