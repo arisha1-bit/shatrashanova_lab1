@@ -65,16 +65,28 @@ float check_workshop_cin(float x, float y)
     }
     return x;
 }
+int check_option(int x)
+{
+    while (!x) {
+        cout <<  "Input correct number (1-7)" << endl;
+        cin.clear();
+        cin.ignore(INT_MAX, '\n');
+        cin >> x;
+    }
+    return x;
+}
 int main()
 
 {
     int option = -1;
     Pipe p;
     CS cs;
+
     while (option) {
         cout << "\nChoose option:\n 1.Add pipe 2.Add CS 3.View all objects " <<
             "4.Edit pipe 5.Edit CS 6.Save 7.Load 0.Exit\n";
         cin >> option;
+        option = check_option(option);
         switch (option) {
             case 1: {
             cout << "\nInput lenght ";
@@ -162,8 +174,6 @@ int main()
                 cs.effectiveness = stod(line);
                 break;
             }
-                    
-
             case 0: {
             return 0;
         }
