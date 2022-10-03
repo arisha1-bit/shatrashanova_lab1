@@ -11,7 +11,7 @@ struct Pipe
 struct CS
 {
     string name = "";
-    float  workshop = -1, working_workshop = -1;
+    int  workshop = -1, working_workshop = -1;
     float effectiveness = 0;
 };
 string status_check(bool x)
@@ -32,13 +32,12 @@ float check_cin(float x)
     }
     return x;
 }
-float check_shop(float x)
+int check_shop(int x)
 {
-    while ((!x) || (x <= 0) || (x-floor(x)!=0)) {
+    while (((cin >> x).fail()) || (cin.peek() != '\n') || (x <= 0)) {
         cout << "Error!!! Input integer numeric value > 0" << endl;
         cin.clear();
         cin.ignore(INT_MAX, '\n');
-        cin >> x;
     }
     return x;
 }
@@ -51,23 +50,21 @@ bool check_status_cin(bool x)
     } 
     return x;
 }
-float check_workshop_cin(float x, float y)
+int check_workshop_cin(int x, int y)
 {
-    while ((x > y) || (!x) || (x <= 0) || (x - floor(x) != 0)) {
-        cout << "Error!!! Input integer numeric value > 0 and not more than workshops" << endl;
+    while (((cin >> x).fail()) || (cin.peek() != '\n') || (x < 0) || (x > y)) {
+        cout << "Error!!! Input integer numeric value not more than workshops" << endl;
         cin.clear();
         cin.ignore(INT_MAX, '\n');
-        cin >> x;
     }
     return x;
 }
 int check_option(int x)
 {
-    while (!x) {
-        cout <<  "Input correct number (1-8)" << endl;
+    while (((cin >> x).fail()) || (cin.peek() != '\n')){
+        cout <<  "Input correct number (0-7)" << endl;
         cin.clear();
         cin.ignore(INT_MAX, '\n');
-        cin >> x;
     }
     return x;
 }
@@ -88,10 +85,8 @@ void createCS(CS& cs)
     cin.ignore(INT_MAX, '\n');
     getline(cin, cs.name);
     cout << "\nNumber of workshops ";
-    cin >> cs.workshop;
     cs.workshop = check_shop(cs.workshop);
     cout << "\nNumber of working workshops ";
-    cin >> cs.working_workshop;
     cs.working_workshop = check_workshop_cin(cs.working_workshop, cs.workshop);
     cs.effectiveness = float(cs.working_workshop) / float(cs.workshop) * 100;
     cout << "\nEffectiveness: " << cs.effectiveness << "%" << endl;
@@ -117,11 +112,41 @@ void cschange(CS& cs) {
         cout << "\nThere is no CS to edit" << endl;
     else {
         cout << "Input new number of working workshops: " << endl;
-        cin >> cs.working_workshop;
         cs.working_workshop = check_workshop_cin(cs.working_workshop, cs.workshop);
         cs.effectiveness = (float(cs.working_workshop) / float(cs.workshop)) * 100;
         cout << "\nEffectiveness: " << cs.effectiveness << "%" << endl;
     }
+}
+void saving(CS& cs, Pipe& p) {
+    ofstream file;
+    file.open("saved_information.txt");
+    file << p.lenght << endl << p.diameter << endl << p.status << endl << cs.name << endl
+        << cs.workshop << endl << cs.working_workshop << endl << cs.effectiveness << "%"
+        << endl;
+    file.close();
+}
+void loading(CS& cs, Pipe& p) {
+    ifstream file2;
+    string line;
+    file2.open("saved_information.txt");
+    if (file2.is_open()) {
+        getline(file2, line);
+        p.lenght = stof(line);
+        getline(file2, line);
+        p.diameter = stof(line);
+        getline(file2, line);
+        p.status = stoi(line);
+        getline(file2, line);
+        cs.name = line;
+        getline(file2, line);
+        cs.workshop = stoi(line);
+        getline(file2, line);
+        cs.working_workshop = stoi(line);
+        getline(file2, line);
+        cs.effectiveness = stod(line);
+    }
+    else
+        cout << "You don't have any file";
 }
 int main()
 {
@@ -131,8 +156,7 @@ int main()
 
     while (option) {
         cout << "\nChoose option:\n 1.Add pipe 2.Add CS 3.View all objects " <<
-            "4.Edit pipe 5.Edit CS 6.Save 7.Load 8.Exit\n";
-        cin >> option;
+            "4.Edit pipe 5.Edit CS 6.Save 7.Load 0.Exit\n";
         option = check_option(option);
         switch (option) {
             case 1: {
@@ -156,43 +180,17 @@ int main()
             break;
         }
             case 6: {
-                ofstream file;
-                file.open("saved_information.txt");
-                file << p.lenght << endl << p.diameter << endl << p.status << endl << cs.name << endl
-                    << cs.workshop << endl << cs.working_workshop << endl << cs.effectiveness << "%" 
-                    << endl;
-                file.close();
+                saving(cs, p);
                 break;
             }
             case 7: { 
-                ifstream file2;
-                string line;
-                file2.open("saved_information.txt");
-                if (file2.is_open()) {
-                    getline(file2, line);
-                    p.lenght = stof(line);
-                    getline(file2, line);
-                    p.diameter = stof(line);
-                    getline(file2, line);
-                    p.status = stoi(line);
-                    getline(file2, line);
-                    cs.name = line;
-                    getline(file2, line);
-                    cs.workshop = stoi(line);
-                    getline(file2, line);
-                    cs.working_workshop = stoi(line);
-                    getline(file2, line);
-                    cs.effectiveness = stod(line);
-                }
-                else
-                    cout << "You don't have any file";
-
+                loading(cs, p);
                 break;
             }
-            case 8: {
+            case 0: {
             return 0;
         }
-            default: cout << "Input correct number (1-8)";
+            default: cout << "Input correct number (0-7)";
                 break;        }
     }
     return 0;
