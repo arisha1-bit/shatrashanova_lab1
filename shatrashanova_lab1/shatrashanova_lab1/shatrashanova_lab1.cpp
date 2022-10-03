@@ -5,33 +5,30 @@ using namespace std;
 struct Pipe
 {
     float lenght = 0, diameter = 0;
-    int status = -1, change_pipe = 0;
+    bool status = 0;
 
 };
 struct CS
 {
     string name = "";
-    float  workshop = -1, working_workshop = -1, change_cs = 0;
+    float  workshop = -1, working_workshop = -1;
     float effectiveness = 0;
 };
-string status_check(int x)
+string status_check(bool x)
 {
-    if (x == 2)
+    if (x == true)
         return ("Pipe works");
-    else if (x == 1)
+    else if (x == false)
         return ("Pipe is repairing");
-    else
-        return ("Unknown");
 
 
 }
 float check_cin(float x)
 {
-    while ((!x) || (x <= 0)) {
+    while ((((cin >> x).fail()) || (cin.peek() != '\n')) || (x <= 0)) {
         cout << "Error!!! Input numeric value > 0" << endl;
         cin.clear();
         cin.ignore(INT_MAX, '\n');
-        cin >> x;
     }
     return x;
 }
@@ -45,13 +42,12 @@ float check_shop(float x)
     }
     return x;
 }
-int check_status_cin(int x)
+bool check_status_cin(bool x)
 {
-    while ((x > 2) || (!x) || (x < 0)) {
-        cout << "Error!!! Input numeric value (1 or 2)" << endl;
+    while (((cin >> x).fail()) || (cin.peek() != '\n')) {
+        cout << "Error!!! Input numeric value (0 or 1)" << endl;
         cin.clear();
         cin.ignore(INT_MAX, '\n');
-        cin >> x;
     } 
     return x;
 }
@@ -75,8 +71,59 @@ int check_option(int x)
     }
     return x;
 }
+void createPipe(Pipe& p)
+{
+    cout << "\nInput lenght ";
+    p.lenght = check_cin(p.lenght);
+    cout << "\nInput diameter ";
+    p.diameter = check_cin(p.diameter);
+    cout << "\nChoose status of pipe (0 if repairing, 1 if works) ";
+    p.status = check_status_cin(p.status);
+    cout << status_check(p.status) << endl;
+}
+void createCS(CS& cs)
+{
+    cout << "\nInput name ";
+    cin.clear();
+    cin.ignore(INT_MAX, '\n');
+    getline(cin, cs.name);
+    cout << "\nNumber of workshops ";
+    cin >> cs.workshop;
+    cs.workshop = check_shop(cs.workshop);
+    cout << "\nNumber of working workshops ";
+    cin >> cs.working_workshop;
+    cs.working_workshop = check_workshop_cin(cs.working_workshop, cs.workshop);
+    cs.effectiveness = float(cs.working_workshop) / float(cs.workshop) * 100;
+    cout << "\nEffectiveness: " << cs.effectiveness << "%" << endl;
+}
+void information(CS& cs, Pipe& p) {
+    cout << "\nPipe info:\nLenght: " << p.lenght << "\nDiameter: " << p.diameter
+        << "\nStatus: " << status_check(p.status) << endl;;
+    cout << "\n\nCS info:\nName: " << cs.name << "\nNumber of workshops: " << cs.workshop
+        << "\nNumber of working workshops: " << cs.working_workshop << "\nEffectiveness: "
+        << cs.effectiveness << "%" << endl;
+}
+void pipechange(Pipe& p) {
+    if (p.lenght == 0)
+        cout << "\nThere is no pipe to edit" << endl;
+    else {
+        cout << "Input new status of pipe (1 if pipe is repairing, 2 if pipe works" << endl;
+        p.status = check_status_cin(p.status);
+        cout << status_check(p.status) << endl;
+    }
+}
+void cschange(CS& cs) {
+    if (cs.working_workshop == -1)
+        cout << "\nThere is no CS to edit" << endl;
+    else {
+        cout << "Input new number of working workshops: " << endl;
+        cin >> cs.working_workshop;
+        cs.working_workshop = check_workshop_cin(cs.working_workshop, cs.workshop);
+        cs.effectiveness = (float(cs.working_workshop) / float(cs.workshop)) * 100;
+        cout << "\nEffectiveness: " << cs.effectiveness << "%" << endl;
+    }
+}
 int main()
-
 {
     int option = -1;
     Pipe p;
@@ -89,62 +136,23 @@ int main()
         option = check_option(option);
         switch (option) {
             case 1: {
-            cout << "\nInput lenght ";
-            cin >> p.lenght;
-            p.lenght = check_cin(p.lenght);
-            cout << "\nInput diameter ";
-            cin >> p.diameter;
-            p.diameter = check_cin(p.diameter);
-            cout << "\nChoose status of pipe (1 if repairing, 2 if works) ";
-            cin >> p.status;
-            p.status = check_status_cin(p.status);
-            cout << status_check(p.status) << endl;
+                createPipe(p);
             break;
         }
             case 2: {
-            cout << "\nInput name ";
-            cin.clear();
-            cin.ignore(INT_MAX, '\n');
-            getline(cin, cs.name);
-            cout << "\nNumber of workshops ";
-            cin >> cs.workshop;
-            cs.workshop = check_shop(cs.workshop);
-            cout << "\nNumber of working workshops ";
-            cin >> cs.working_workshop;
-            cs.working_workshop = check_workshop_cin(cs.working_workshop, cs.workshop);
-            cs.effectiveness = float(cs.working_workshop) / float(cs.workshop)*100;
-            cout << "\nEffectiveness: " << cs.effectiveness <<"%"<< endl;
+                createCS(cs);
             break;
         }
             case 3: {
-            cout << "\nPipe info:\nLenght: " << p.lenght << "\nDiameter: " << p.diameter 
-                << "\nStatus: " << status_check(p.status) << endl;;
-            cout << "\n\nCS info:\nName: " << cs.name << "\nNumber of workshops: " << cs.workshop
-                << "\nNumber of working workshops: " << cs.working_workshop << "\nEffectiveness: "
-                << cs.effectiveness << "%"<<endl;
+                information(cs, p);
             break;
         }
             case 4: {
-            if (p.status == -1)
-                cout << "\nThere is no pipe to edit" << endl;
-            else {
-                cout << "Input new status of pipe (1 if pipe is repairing, 2 if pipe works" << endl;
-                cin >> p.status;
-                p.status = check_status_cin(p.status);
-                cout << status_check(p.status) << endl;
-            }
+                pipechange(p);
             break;
         }
             case 5: {
-            if (cs.working_workshop == -1)
-                cout << "\nThere is no CS to edit" << endl;
-            else {
-                cout << "Input new number of working workshops: " << endl;
-                cin >> cs.working_workshop;
-                cs.working_workshop = check_workshop_cin(cs.working_workshop, cs.workshop);
-                cs.effectiveness = (float(cs.working_workshop) / float(cs.workshop))*100;
-                cout << "\nEffectiveness: " << cs.effectiveness <<"%"<<endl;
-            }
+                cschange(cs);
             break;
         }
             case 6: {
@@ -160,20 +168,25 @@ int main()
                 ifstream file2;
                 string line;
                 file2.open("saved_information.txt");
-                getline(file2, line);
-                p.lenght = stof(line);
-                getline(file2, line);
-                p.diameter = stof(line);
-                getline(file2, line);
-                p.status = stoi(line);
-                getline(file2, line);
-                cs.name = line;
-                getline(file2, line);
-                cs.workshop = stoi(line);
-                getline(file2, line);
-                cs.working_workshop = stoi(line);
-                getline(file2, line);
-                cs.effectiveness = stod(line);
+                if (file2.is_open()) {
+                    getline(file2, line);
+                    p.lenght = stof(line);
+                    getline(file2, line);
+                    p.diameter = stof(line);
+                    getline(file2, line);
+                    p.status = stoi(line);
+                    getline(file2, line);
+                    cs.name = line;
+                    getline(file2, line);
+                    cs.workshop = stoi(line);
+                    getline(file2, line);
+                    cs.working_workshop = stoi(line);
+                    getline(file2, line);
+                    cs.effectiveness = stod(line);
+                }
+                else
+                    cout << "You don't have any file";
+
                 break;
             }
             case 8: {
