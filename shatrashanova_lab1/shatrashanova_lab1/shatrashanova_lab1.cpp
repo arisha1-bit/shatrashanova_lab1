@@ -1,17 +1,21 @@
 ﻿#include <iostream>
 #include <fstream>
 #include <string>
+#include <vector>;
 using namespace std;
+int idp = 0;
+int idcs = 0;
 struct Pipe
 {
     float lenght = 0, diameter = 0;
     bool status = 0;
+    int idp = 0;
 
 };
 struct CS
 {
     string name = "";
-    int  workshop = -1, working_workshop = -1;
+    int  workshop = -1, working_workshop = -1, idcs = 0;
     float effectiveness = 0;
 };
 string status_check(bool x)
@@ -70,6 +74,9 @@ int check_option(int x)
 }
 void createPipe(Pipe& p)
 {
+    idp++;
+    p.idp = idp;
+    cout << "\n Index of pipe: " << p.idp;
     cout << "\nInput lenght ";
     p.lenght = check_cin(p.lenght);
     cout << "\nInput diameter ";
@@ -80,6 +87,9 @@ void createPipe(Pipe& p)
 }
 void createCS(CS& cs)
 {
+    idcs++;
+    cs.idcs = idcs;
+    cout << "\nIndex of cs: " << cs.idcs;
     cout << "\nInput name ";
     cin.clear();
     cin.ignore(INT_MAX, '\n');
@@ -91,12 +101,34 @@ void createCS(CS& cs)
     cs.effectiveness = float(cs.working_workshop) / float(cs.workshop) * 100;
     cout << "\nEffectiveness: " << cs.effectiveness << "%" << endl;
 }
-void information(CS& cs, Pipe& p) {
-    cout << "\nPipe info:\nLenght: " << p.lenght << "\nDiameter: " << p.diameter
-        << "\nStatus: " << status_check(p.status) << endl;;
-    cout << "\n\nCS info:\nName: " << cs.name << "\nNumber of workshops: " << cs.workshop
-        << "\nNumber of working workshops: " << cs.working_workshop << "\nEffectiveness: "
-        << cs.effectiveness << "%" << endl;
+int check_id_of_pipe(vector <Pipe>& g) {
+    int x;
+    while (((cin >> x).fail()) || (cin.peek() != '\n') || (x > g.size()) || (x<0)) {
+        cout << "Error!!! Input integer numeric index of existing pipe > 0" << endl;
+        cin.clear();
+        cin.ignore(INT_MAX, '\n');
+    }
+    return x;
+}
+int check_id_of_cs(vector <CS>& g) {
+    int x;
+    while (((cin >> x).fail()) || (cin.peek() != '\n') || (x > g.size()) || (x < 0)) {
+        cout << "Error!!! Input integer numeric index of existing CS > 0" << endl;
+        cin.clear();
+        cin.ignore(INT_MAX, '\n');
+    }
+    return x;
+}
+void information(vector <Pipe>& gp, vector <CS>& gcs) {
+    for (int i = 0; i < gp.size(); i++) {
+        cout << "\nIndex of pipe: " << gp[i].idp << "\nPipe info:\nLenght: " << gp[i].lenght << "\nDiameter: " << gp[i].diameter
+            << "\nStatus: " << status_check(gp[i].status) << endl;
+    }
+    for (int i = 0; i < gp.size(); i++) {
+        cout << "\nIndex of CS: " << gcs[i].idcs << "\nCS info:\nName: " << gcs[i].name << "\nNumber of workshops: " << gcs[i].workshop
+            << "\nNumber of working workshops: " << gcs[i].working_workshop << "\nEffectiveness: "
+            << gcs[i].effectiveness << "%" << endl;
+    }
 }
 void pipechange(Pipe& p) {
     if (p.lenght == 0)
@@ -148,50 +180,66 @@ void loading(CS& cs, Pipe& p) {
     else
         cout << "You don't have any file";
 }
+Pipe& select_pipe(vector <Pipe>& g) {
+    cout << "Enter index of pipe ";
+    int id = check_id_of_pipe(g);
+    return g[id-1];
+
+}
+CS& select_cs(vector <CS>& g) {
+    cout << "Enter index of pipe ";
+    int id = check_id_of_cs(g);
+    return g[id - 1];
+
+}
 int main()
 {
     int option = -1;
-    Pipe p;
-    CS cs;
+    vector <Pipe> pipe_group;
+    vector <CS> cs_group;
 
     while (option) {
         cout << "\nChoose option:\n 1.Add pipe 2.Add CS 3.View all objects " <<
             "4.Edit pipe 5.Edit CS 6.Save 7.Load 0.Exit\n";
         option = check_option(option);
         switch (option) {
-            case 1: {
-                createPipe(p);
+        case 1: {
+            Pipe p;
+            createPipe(p);
+            pipe_group.push_back(p); 
             break;
         }
             case 2: {
+                CS cs;
                 createCS(cs);
+                cs_group.push_back(cs); 
             break;
         }
             case 3: {
-                information(cs, p);
+                information(pipe_group, cs_group); 
             break;
         }
             case 4: {
-                pipechange(p);
+               // pipechange(p);
             break;
         }
             case 5: {
-                cschange(cs);
+               // cschange(cs);
             break;
         }
             case 6: {
-                saving(cs, p);
+                //saving(cs, p);
                 break;
             }
             case 7: { 
-                loading(cs, p);
+               // loading(cs, p);
                 break;
             }
             case 0: {
             return 0;
         }
             default: cout << "Input correct number (0-7)";
-                break;        }
+                break;       }
     }
     return 0;
 }
