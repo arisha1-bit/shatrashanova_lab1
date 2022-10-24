@@ -29,12 +29,16 @@ string status_check(bool x)
 }
 int editioncheck() {
     int x;
-    while (((cin >> x).fail()) || (cin.peek() != '\n') || (x < 1)||(x>2)) {
-        cout << "Error!!! Input integer numeric value (1 or 2) " << endl;
-        cin.clear();
-        cin.ignore(INT_MAX, '\n');
+    if (idp == 0)
+        cout << "There is no pipe to change";
+    else {
+        while (((cin >> x).fail()) || (cin.peek() != '\n') || (x < 1) || (x > 2)) {
+            cout << "Error!!! Input integer numeric value (1 or 2) " << endl;
+            cin.clear();
+            cin.ignore(INT_MAX, '\n');
+        }
     }
-    return x;
+        return x;
 }
 float check_cin(float x)
 {
