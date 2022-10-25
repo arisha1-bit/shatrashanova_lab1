@@ -165,8 +165,8 @@ void pipechange(vector <Pipe>& g) {
         cout << status_check(x) << endl;
     }
 }
-void cschange(CS& cs) {
-    if (cs.working_workshop == -1)
+void cschange_choose(CS& cs) {
+    if (idcs == 0)
         cout << "\nThere is no CS to edit" << endl;
     else {
         cout << "Input new number of working workshops: " << endl;
@@ -213,7 +213,7 @@ Pipe& select_pipe(vector <Pipe>& g) {
 
 }
 CS& select_cs(vector <CS>& g) {
-    cout << "Enter index of pipe ";
+    cout << "Enter index of CS ";
     int id = check_id_of_cs(g);
     return g[id - 1];
 
@@ -247,7 +247,7 @@ int main()
         }
             case 4: {
                 int edit;
-                cout << "1.Choose pipe to edit 2.Choose all";
+                cout << "/n1.Choose pipe to edit 2.Choose all" << endl;;
                 edit = editioncheck();
                 if (edit == 1)
                     pipechange_choose(select_pipe(pipe_group));
@@ -256,7 +256,9 @@ int main()
             break;
         }
             case 5: {
-               // cschange(cs);
+                int edit;
+                cout << "/n1.Choose CS to edit" << endl;
+                cschange_choose(select_cs(cs_group));
             break;
         }
             case 6: {
@@ -265,6 +267,14 @@ int main()
             }
             case 7: { 
                // loading(cs, p);
+                break;
+            }
+            case 8:
+            {
+                break;
+            }
+            case 9:
+            {
                 break;
             }
             case 0: {
