@@ -273,7 +273,7 @@ void search_pipe(vector <Pipe>& g) {
 }
 void search_cs(vector <CS>& g) {
     if (idcs != 0) {
-        cout << "\nSearch CS by filter: 1.Name 2.Effectiveness" << endl;
+        cout << "\nSearch CS by filter: 1.Name 2.Status" << endl;
         int edit;
         int k = 0;
         float eff = 0;
