@@ -1,23 +1,44 @@
 ﻿#include <iostream>
 #include <fstream>
 #include <string>
-#include <vector>;
+#include <vector>
+#include <float.h>
+#include <unordered_map>
+
 using namespace std;
-int idp = 0;
-int idcs = 0;
-struct Pipe
+class Pipe
 {
-    float lenght = 0, diameter = 0;
-    bool status = 0;
-    int idp = 0;
+public:
+    static int max_id;
+
+    Pipe() {
+        idp=max_id++;
+    }
+    friend istream& operator>> (istream& in, Pipe& p);
+    friend ostream& operator<< (ostream& out, Pipe& p);
+    int get_id() { return idp;}
+
+private:
+    float lenght, diameter;
+    bool status;
+    int idp;
     string name = "";
 
 };
-struct CS
+class CS
 {
-    string name = "";
-    int  workshop = -1, working_workshop = -1, idcs = 0;
-    float effectiveness = 0;
+public: static int max_idd;
+       CS() {
+           idcs = max_idd++;
+       }
+       friend istream& operator>> (istream& in, CS& p);
+       friend ostream& operator<< (ostream& out, CS& cs);
+       int get_idd() { return idcs; }
+
+private:
+    string name;
+    int  workshop, working_workshop, idcs;
+    float effectiveness;
 };
 string status_check(bool x)
 {
@@ -25,90 +46,35 @@ string status_check(bool x)
         return ("Pipe works");
     else if (x == false)
         return ("Pipe is repairing");
-
-
 }
-int editioncheck() {
-    int x;
-    while (((cin >> x).fail()) || (cin.peek() != '\n') || (x < 1)||(x>2)) {
-        cout << "Error!!! Input integer numeric value (1 or 2) " << endl;
+template <typename T>
+T correctnumber(T min, T max) {
+    T x;
+    cin >> x;
+    while (cin.fail() || (cin.peek() != '\n') || (x < min) || (x > max)) {
+        cout << "Error!!! Input numeric value > " << min << "and < " << max<<endl;
         cin.clear();
         cin.ignore(INT_MAX, '\n');
     }
     return x;
 }
-float check_cin(float x)
+istream& operator>> (istream& in, Pipe& p)
 {
-    while ((((cin >> x).fail()) || (cin.peek() != '\n')) || (x <= 0)) {
-        cout << "Error!!! Input numeric value > 0" << endl;
-        cin.clear();
-        cin.ignore(INT_MAX, '\n');
-    }
-    return x;
-}
-float check_cin_effectiveness(float x)
-{
-    while ((((cin >> x).fail()) || (cin.peek() != '\n')) || (x < 0) || (x>100)) {
-        cout << "Error!!! Input numeric value > 0" << endl;
-        cin.clear();
-        cin.ignore(INT_MAX, '\n');
-    }
-    return x;
-}
-int check_shop(int x)
-{
-    while (((cin >> x).fail()) || (cin.peek() != '\n') || (x <= 0)) {
-        cout << "Error!!! Input integer numeric value > 0" << endl;
-        cin.clear();
-        cin.ignore(INT_MAX, '\n');
-    }
-    return x;
-}
-bool check_status_cin(bool x)
-{
-    while (((cin >> x).fail()) || (cin.peek() != '\n')) {
-        cout << "Error!!! Input numeric value (0 or 1)" << endl;
-        cin.clear();
-        cin.ignore(INT_MAX, '\n');
-    } 
-    return x;
-}
-int check_workshop_cin(int x, int y)
-{
-    while (((cin >> x).fail()) || (cin.peek() != '\n') || (x < 0) || (x > y)) {
-        cout << "Error!!! Input integer numeric value not more than workshops" << endl;
-        cin.clear();
-        cin.ignore(INT_MAX, '\n');
-    }
-    return x;
-}
-int check_option(int x)
-{
-    while (((cin >> x).fail()) || (cin.peek() != '\n')){
-        cout <<  "Input correct number (0-7)" << endl;
-        cin.clear();
-        cin.ignore(INT_MAX, '\n');
-    }
-    return x;
-}
-void createPipe(Pipe& p)
-{
-    idp++;
-    p.idp = idp;
     cout << "\n Index of pipe: " << p.idp;
     cout << "\nInput name ";
     cin.clear();
     cin.ignore(INT_MAX, '\n');
     getline(cin, p.name);
     cout << "\nInput lenght ";
-    p.lenght = check_cin(p.lenght);
+    p.lenght = correctnumber(0.0, DBL_MAX);
     cout << "\nInput diameter ";
-    p.diameter = check_cin(p.diameter);
+    p.diameter = correctnumber(0.0, DBL_MAX);
     cout << "\nChoose status of pipe (0 if repairing, 1 if works) ";
-    p.status = check_status_cin(p.status);
+    p.status = correctnumber(0,1);
     cout << status_check(p.status) << endl;
+    return in;
 }
-void createCS(CS& cs)
+istream& operator>> (istream& in, CS& cs)
 {
     idcs++;
     cs.idcs = idcs;
@@ -118,84 +84,50 @@ void createCS(CS& cs)
     cin.ignore(INT_MAX, '\n');
     getline(cin, cs.name);
     cout << "\nNumber of workshops ";
-    cs.workshop = check_shop(cs.workshop);
+    cs.workshop = correctnumber(0,INT_MAX);
     cout << "\nNumber of working workshops ";
-    cs.working_workshop = check_workshop_cin(cs.working_workshop, cs.workshop);
-    cs.effectiveness = float(cs.working_workshop) / float(cs.workshop) * 100;
-    cout << "\nEffectiveness: " << cs.effectiveness << "%" << endl;
+    cs.working_workshop = correctnumber(0,cs.workshop);
+    cs.effectiveness = correctnumber(0, 100);
+    cout << "\nEffectiveness: " << cs.effectiveness << endl;
+    return in;
 }
-int check_id_of_pipe(vector <Pipe>& g) {
-    int x;
-    while (((cin >> x).fail()) || (cin.peek() != '\n') || (x > g.size()) || (x<0)) {
-        cout << "Error!!! Input integer numeric index of existing pipe > 0" << endl;
-        cin.clear();
-        cin.ignore(INT_MAX, '\n');
-    }
-    return x;
-}
-int check_id_of_cs(vector <CS>& g) {
-    int x;
-    while (((cin >> x).fail()) || (cin.peek() != '\n') || (x > g.size()) || (x < 0)) {
-        cout << "Error!!! Input integer numeric index of existing CS > 0" << endl;
-        cin.clear();
-        cin.ignore(INT_MAX, '\n');
-    }
-    return x;
-}
-void information(vector <Pipe>& gp, vector <CS>& gcs) {
-    if (gp.size() != 0) {
-        for (int i = 0; i < gp.size(); i++) {
-            cout << "\nIndex of pipe: " << gp[i].idp << "\nPipe info: " << "\nName: " << gp[i].name << "\nLenght: " << gp[i].lenght << "\nDiameter : " << gp[i].diameter
-                << "\nStatus: " << status_check(gp[i].status) << endl;
+ostream& operator<< (ostream& out, Pipe& p) {
+            out << "\nIndex of pipe: " << p.idp << "\nPipe info: " << "\nName: " << p.name << "\nLenght: " << p.lenght << "\nDiameter : " << p.diameter
+                << "\nStatus: " << status_check(p.status) << endl;
+            return out;
         }
+ostream& operator<< (ostream& out, CS& cs) {
+            out << "\nIndex of CS: " << cs.idcs << "\nCS info:\nName: " << cs.name << "\nNumber of workshops: " << cs.workshop
+                << "\nNumber of working workshops: " << cs.working_workshop << "\nEffectiveness: "
+                << cs.effectiveness << "%" << endl;
+            return out;
+}
+void information(unordered_map<int, Pipe>& pipe_group, unordered_map<int,CS>& cs_group) {
+    for (auto& pipe : pipe_group) {
+        cout << pipe.second << endl;
     }
-    if (gcs.size() != 0) {
-        for (int i = 0; i < gp.size(); i++) {
-            cout << "\nIndex of CS: " << gcs[i].idcs << "\nCS info:\nName: " << gcs[i].name << "\nNumber of workshops: " << gcs[i].workshop
-                << "\nNumber of working workshops: " << gcs[i].working_workshop << "\nEffectiveness: "
-                << gcs[i].effectiveness << "%" << endl;
-        }
+    for (auto& cs : cs_group) {
+        cout << cs.second << endl;
     }
 }
-void pipechange_choose(Pipe& p) {
-    if (idp == 0)
-        cout << "There is no pipe to change";
-    else {
-        cout << "Input new status of pipe (1 if pipe is repairing, 2 if pipe works" << endl;
-        p.status = check_status_cin(p.status);
-        cout << status_check(p.status) << endl;
-    }
-    }
-void pipechange(vector <Pipe>& g) {
-    bool x = 0;
-    if (idp == 0)
-        cout << "There is no pipe to change";
-    else {
-        cout << "Input new status of pipes (0 if pipe is repairing, 1 if pipe works)" << endl;
-        x = check_status_cin(x);
-        for (int i = 0; i < g.size(); i++) {
-            g[i].status = x;
-        }
-        cout << status_check(x) << endl;
-    }
+void CS::edit_cs() {
+    cout << "Workshops: " << workshop << endl;
+    cout << "Choose new status of pipe (0 if in repairing, 1 if in work)" << endl;
+    status = correctnumber(0, 1);
+    cout << status_check(status);
 }
-void cschange_choose(CS& cs) {
-    if (idcs == 0)
-        cout << "\nThere is no CS to edit" << endl;
-    else {
-        cout << "Input new number of working workshops: " << endl;
-        cs.working_workshop = check_workshop_cin(cs.working_workshop, cs.workshop);
-        cs.effectiveness = (float(cs.working_workshop) / float(cs.workshop)) * 100;
-        cout << "\nEffectiveness: " << cs.effectiveness << "%" << endl;
-    }
+void Pipe::edit_Pipe() {
+    cout << status_check(status) << endl;
+    cout << "Choose new status of pipe (0 if in repairing, 1 if in work)" << endl;
+    status = correctnumber(0, 1);
+    cout << status_check(status);
 }
-void saving(CS& cs, Pipe& p) {
-    ofstream file;
-    file.open("saved_information.txt");
-    file << p.lenght << endl << p.diameter << endl << p.status << endl << cs.name << endl
-        << cs.workshop << endl << cs.working_workshop << endl << cs.effectiveness << "%"
-        << endl;
-    file.close();
+void Pipe::save_pipe(ofstream& file) {
+    file << lenght << endl << diameter << endl << status << endl;
+}
+void CS::save_cs(ofstream& file) {
+    file << cs.name << endl
+        << cs.workshop << endl << cs.working_workshop << endl << cs.effectiveness << endl;
 }
 void loading(CS& cs, Pipe& p) {
     ifstream file2;
@@ -222,116 +154,38 @@ void loading(CS& cs, Pipe& p) {
 }
 Pipe& select_pipe(vector <Pipe>& g) {
     cout << "Enter index of pipe ";
-    int id = check_id_of_pipe(g);
+    int id = correctnumber(g);
     return g[id-1];
 
 }
 CS& select_cs(vector <CS>& g) {
     cout << "Enter index of CS ";
-    int id = check_id_of_cs(g);
+    int id = correctnumber(g);
     return g[id - 1];
-
-}
-void search_pipe(vector <Pipe>& g) {
-    if (idp != 0) {
-        cout << "\nSearch pipe by filter: 1.Name 2.Status" << endl;
-        int edit;
-        int k = 0;
-        bool status = 0;
-        string name;
-        edit = editioncheck();
-        if (edit == 1) {
-            cout << "Please, enter the name of pipe" << endl;
-            cin >> name;
-            for (int i = 0; i < g.size(); i++) {
-                if (g[i].name == name) {
-                    k++;
-                    cout << "\nIndex of pipe: " << g[i].idp << "\nPipe info: " << "\nName: " <<
-                        g[i].name << "\nLenght: " << g[i].lenght << "\nDiameter : " << g[i].diameter
-                        << "\nStatus: " << status_check(g[i].status) << endl;
-                }
-            }
-        }
-        else {
-            cout << "\nPlease, enter status of pipe (0 if pipe is repairing, 1 if pipe works) " << endl;
-            status = check_status_cin(status);
-            for (int i = 0; i < g.size(); i++) {
-                if (g[i].status == status) {
-                    k++;
-                    cout << "\nIndex of pipe: " << g[i].idp << "\nPipe info: " << "\nName: " <<
-                        g[i].name << "\nLenght: " << g[i].lenght << "\nDiameter : " << g[i].diameter
-                        << "\nStatus: " << status_check(g[i].status) << endl;
-                }
-            }
-        }
-        if (k == 0) {
-            cout << "\nThere is no pipe with this status." << endl;
-        }
-    }
-    else
-        cout << "You don't have any pipe" << endl;
-}
-void search_cs(vector <CS>& g) {
-    if (idcs != 0) {
-        cout << "\nSearch CS by filter: 1.Name 2.Effectiveness" << endl;
-        int edit;
-        int k = 0;
-        float eff = 0;
-        string name;
-        edit = editioncheck();
-        if (edit == 1) {
-            cout << "Please, enter the name of CS" << endl;
-            cin >> name;
-            for (int i = 0; i < g.size(); i++) {
-                if (g[i].name == name) {
-                    k++;
-                    cout << "\nIndex of CS: " << g[i].idcs << "\nCS info:\nName: " << g[i].name << "\nNumber of workshops: " << g[i].workshop
-                        << "\nNumber of working workshops: " << g[i].working_workshop << "\nEffectiveness: "
-                        << g[i].effectiveness << "%" << endl;
-                }
-            }
-        }
-        else {
-            cout << "\nPlease, enter effectiveness of pipe (0-100) " << endl;
-            eff = check_cin_effectiveness(eff);
-            for (int i = 0; i < g.size(); i++) {
-                if (g[i].effectiveness == eff) {
-                    k++;
-                    cout << "\nIndex of CS: " << g[i].idcs << "\nCS info:\nName: " << g[i].name << "\nNumber of workshops: " << g[i].workshop
-                        << "\nNumber of working workshops: " << g[i].working_workshop << "\nEffectiveness: "
-                        << g[i].effectiveness << "%" << endl;
-                }
-            }
-        }
-        if (k == 0) {
-            cout << "\nThere is no CS with this effectiveness." << endl;
-        }
-    }
-        else
-            cout << "You don't have any CS" << endl;
 
 }
 int main()
 {
     int option = -1;
-    vector <Pipe> pipe_group;
-    vector <CS> cs_group;
+    unordered_map<int, Pipe> pipe_group;
+    unordered_map<int, CS> cs_group;
+
 
     while (option) {
         cout << "\nChoose option:\n 1.Add pipe 2.Add CS 3.View all objects " <<
             "4.Edit pipe 5.Edit CS 6.Save 7.Load 8.Search pipe 9.Search CS 0.Exit\n";
-        option = check_option(option);
+        option = correctnumber(0,9);
         switch (option) {
-        case 1: {
+            case 1: {
             Pipe p;
-            createPipe(p);
-            pipe_group.push_back(p); 
+            cin >> p;
+            pipe_group.insert({ p.get_id(), p });
             break;
         }
             case 2: {
                 CS cs;
-                createCS(cs);
-                cs_group.push_back(cs); 
+                cin >> cs;
+                cs_group.insert({ cs.get_idd(), cs });
             break;
         }
             case 3: {
@@ -339,19 +193,22 @@ int main()
             break;
         }
             case 4: {
-                int edit;
-                cout << "\n1.Choose pipe to edit 2.Choose all" << endl;;
-                edit = editioncheck();
-                if (edit == 1)
-                    pipechange_choose(select_pipe(pipe_group));
-                else
-                    pipechange(pipe_group);
+                //int edit;
+                //cout << "\n1.Choose pipe to edit 2.Choose all" << endl;;
+                //edit = correctnumber(1,2);
+                //if (edit == 1)
+                  //  pipechange_choose(select_pipe(pipe_group));
+               // else
+                   // pipechange(pipe_group);
             break;
         }
             case 5: {
-                int edit;
-                cout << "/n1.Choose CS to edit" << endl;
-                cschange_choose(select_cs(cs_group));
+                if (cs_group.size() != 0) {
+                    int id;
+                    id = correctnumber(1, (int)cs_group.size());
+                    cout << "/n1.Choose CS to edit" << endl;
+                    cs_group[id].
+                }
             break;
         }
             case 6: {
@@ -362,13 +219,11 @@ int main()
                // loading(cs, p);
                 break;
             }
-            case 8:
-            {
+            case 8: {
                 search_pipe(pipe_group);
                 break;
             }
-            case 9:
-            {
+            case 9: {
                 search_cs(cs_group);
                 break;
             }
@@ -380,3 +235,6 @@ int main()
     }
     return 0;
 }
+
+using check = bool(*)(int);
+vector <check> = {}
