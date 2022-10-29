@@ -338,23 +338,16 @@ int main()
             case 8: {
                 vector <int> x;
                 search_p(pipe_group, x);
-                if (x.size() != 0) {
-                    for (auto& i : x)
-                        cout << pipe_group[i] << endl;
-                }
-                else
-                    cout << "There is no such pipe" << endl;
+                for (auto& i : x)
+                    cout << pipe_group[i] << endl;
+
                 break;
             }
             case 9: {
                 vector <int> x;
                 search_cs(cs_group, x);
-                if (x.size() != 0) {
-                    for (auto& i : x)
-                        cout << cs_group[i] << endl;
-                }
-                else
-                    cout << "There is no such CS";
+                for (auto& i : x)
+                    cout << cs_group[i] << endl;
                 break;
             }
             case 0: {
