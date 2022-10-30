@@ -104,9 +104,9 @@ istream& operator>> (istream& in, Pipe& p)
 {
     cout << "\n Index of pipe: " << p.idp;
     cout << "\nInput name ";
-    cin.clear();
-    cin.ignore(INT_MAX, '\n');
-    getline(cin, p.name);
+    in.clear();
+    in.ignore(INT_MAX, '\n');
+    getline(in, p.name);
     cout << "\nInput lenght ";
     p.lenght = correctnumber(0.0, DBL_MAX);
     cout << "\nInput diameter ";
@@ -120,9 +120,9 @@ istream& operator>> (istream& in, CS& cs)
 {
     cout << "\nIndex of cs: " << cs.idcs;
     cout << "\nInput name ";
-    cin.clear();
-    cin.ignore(INT_MAX, '\n');
-    getline(cin, cs.name);
+    in.clear();
+    in.ignore(INT_MAX, '\n');
+    getline(in, cs.name);
     cout << "\nNumber of workshops ";
     cs.workshop = correctnumber(0,INT_MAX);
     cout << "\nNumber of working workshops ";
@@ -211,14 +211,16 @@ void CS::save_cs(ofstream& file) {
 }
 void Pipe::load_pipe(ifstream& file) {
     file >> idp;
-    file >> name;
+    getline(file, name);
+    getline(file, name);
     file >> lenght;
     file >> diameter;
     file >> status;
 }
 void CS::load_cs(ifstream& file) {
     file >> idcs;
-    file >> name;
+    getline(file, name);
+    getline(file, name);
     file >> workshop;
     file >> working_workshop;
     file >> effectiveness;
@@ -310,8 +312,8 @@ int main()
         }
         case 5: {
             vector <int> idcs;
-            cout << "1.Edit one CS 2.Edit CSs 3.Delete CS" << endl;
             if (cs_group.size() != 0) {
+                cout << "1.Edit one CS 2.Edit CSs 3.Delete CS" << endl;
                 int edit;
                 edit = correctnumber(1, 2);
                 if (edit == 1) {
