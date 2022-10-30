@@ -4,6 +4,7 @@
 #include <vector>
 #include <float.h>
 #include <unordered_map>
+#include <unordered_set>
 using namespace std;
 class Pipe
 {
@@ -38,7 +39,7 @@ public: static int max_idd;
       void edit_cs();
       void load_cs(ifstream& file);
       int get_idd() { return idcs; }
-      double get_unused() { return ((workshop - working_workshop) / workshop) * 100; }
+      double get_unused() { return (((double)workshop - (double)working_workshop) / (double)workshop)*100; }
       string name = "";
 
 
@@ -59,7 +60,7 @@ template <typename T>
 T correctnumber(T min, T max) {
     T x;
     while (((cin>>x).fail()) || (cin.peek() != '\n') || (x < min) || (x > max)) {
-        cout << "Error!!! Input numeric value > " << min << " and < " << max<<endl;
+        cout << "Error!!! Input numeric value >= " << min << " and =< " << max<<endl;
         cin.clear();
         cin.ignore(INT_MAX, '\n');
     }
@@ -251,14 +252,50 @@ int main()
             case 4: {
                 int edit;
                 int id;
+                int x;
+
                 if (pipe_group.size() != 0) {
                     cout << "1.Choose one pipe 2.Choose pipes 3.Delete pipe";
-                    edit = correctnumber(1, 2);
+                    edit = correctnumber(1, 3);
                     if (edit == 1) {
                         cout << "\n1.Choose pipe to edit" << endl;
                         id = correctnumber(0, (int)pipe_group.size());
                         pipe_group[id].edit_Pipe();
                     }
+                    if (edit == 2) {
+                        vector <int> idp;
+                        cout << "Choose pipes by 1.filter 2.id" << endl;
+                        x = correctnumber(1, 2);
+                        if (x == 1) {
+                            search_p(pipe_group, idp);
+                            cout << "Enter new status (0 if repairing, 1 if works)" << endl;
+                            bool s;
+                            s = correctnumber(0, 1);
+                            for (auto& i : idp) 
+                                pipe_group[i].status = s;
+                            }
+                        
+                        if (x == 2) {
+                            unordered_set <int> ids;
+                            cout << "Enter the number of identifiers of pipe you want to edit" << endl;
+                            int n;
+                            n = correctnumber(0, Pipe::max_id);
+                            cout << "Enter idetifiers of pipes" << endl;
+                            int y;
+                            for (int i = 0; i < n; i++) {
+                                y = correctnumber(0, Pipe::max_id);
+                                if (pipe_group.find(y) != pipe_group.end())
+                                    ids.insert(y);
+                                
+                            }
+                            cout << "Enter new status (0 if repairing, 1 if works)" << endl;
+                            bool s;
+                            s = correctnumber(0, 1);
+                            for (auto& i : ids) 
+                                pipe_group[i].status = s;
+                        }
+                        }
+                    
                 }
                 else
                     cout << "There is no pipe to edit" << endl;
@@ -338,16 +375,23 @@ int main()
             case 8: {
                 vector <int> x;
                 search_p(pipe_group, x);
-                for (auto& i : x)
-                    cout << pipe_group[i] << endl;
-
+                if (x.size() != 0) {
+                    for (auto& i : x)
+                        cout << pipe_group[i] << endl;
+                }
+                else
+                    cout << "There is no such pipe" << endl;
                 break;
             }
             case 9: {
                 vector <int> x;
                 search_cs(cs_group, x);
-                for (auto& i : x)
-                    cout << cs_group[i] << endl;
+                if (x.size() != 0) {
+                    for (auto& i : x)
+                        cout << cs_group[i] << endl;
+                }
+                else
+                    cout << "There is no such CS";
                 break;
             }
             case 0: {
