@@ -169,7 +169,7 @@ void Pipe::edit_Pipe() {
     cout << "Status: " << status_check(status) << endl;
     cout << "Enter new status of pipe (0 if in repairing, 1 if works)" << endl;
     status = correctnumber(0,1);
-    cout << status_check(status);
+    cout << status_check(status) << endl;;
 }
  void Pipe::save_pipe(ofstream& file) {
     file << idp << endl << name << endl << lenght << endl << diameter << endl << status << endl;
@@ -238,7 +238,7 @@ int main()
                     id1 = correctnumber(0, (int)pipe_group.size());
                     if (iddp.find(id1) != iddp.end()) {
                         pipe_group[id1].edit_Pipe();
-                        cout << "Pipe was edited";
+                        cout << "Pipe was edited" << endl;
                     }
                     else
                         cout << "There is no such pipe";
@@ -257,8 +257,10 @@ int main()
                                 pipe_group[i].status = s;
                         }
 
-                        else
+                        else {
                             cout << "There is no such pipe";
+                            break;
+                        }
                     }
 
 
@@ -268,7 +270,7 @@ int main()
                         cout << "Enter the number of identifiers of pipe you want to edit" << endl;
                         int n;
                         int y;
-                        n = correctnumber(0, (int)pipe_group.size());
+                        n = correctnumber(1, (int)pipe_group.size());
                         cout << "Enter idetifiers of pipes" << endl;
                         for (int i = 0; i < n; i++) {
                             y = correctnumber(0, Pipe::max_id - 1);
@@ -336,15 +338,21 @@ int main()
                             }
                             for (auto& pi : id) {
                                 pipe_group.erase(pipe_group.find(pi));
-
+                                iddp.erase(iddp.find(pi));
                             }
                         }
 
                         else {
                             search_p(pipe_group, idp);
-                            for (auto& i : idp) {
-                                pipe_group.erase(pipe_group.find(i));
-                                iddp.erase(iddp.find(i));
+                            if (idp.size() != 0) {
+                                for (auto& i : idp) {
+                                    pipe_group.erase(pipe_group.find(i));
+                                    iddp.erase(iddp.find(i));
+                                }
+                            }
+                            else {
+                                cout << "There is no such pipe";
+                                break;
                             }
 
                         }
@@ -352,9 +360,9 @@ int main()
                     cout << "Pipe was deleted";
                 }
             }
-                
-                
-            
+
+
+
             else
                 cout << "There is no pipe to edit" << endl;
             break;
@@ -385,7 +393,7 @@ int main()
                         cout << iddcs;
                         cout << "Enter the number of cs you want to edit" << endl;
                         int y;
-                        y = correctnumber(0, (int)cs_group.size());
+                        y = correctnumber(1, (int)cs_group.size());
                         cout << "Enter idetifiers of CSs" << endl;
                         for (int i = 0; i < y; i++) {
                             cin >> x;
@@ -396,17 +404,24 @@ int main()
                                 cout << "There is no such cs" << endl;
                             }
                         }
-                        for (auto& id : idw) 
-                            
-                             cs_group[id].edit_cs();
-                        }
+                        for (auto& id : idw)
+
+                            cs_group[id].edit_cs();
+                    }
 
                     else {
                         search_cs(cs_group, idcs);
-                        for (auto& i : idcs)
-                            cs_group[i].edit_cs();
-                    }
+                        if (idcs.size() != 0) {
+                            for (auto& i : idcs)
+                                cs_group[i].edit_cs();
+                        }
 
+                        else {
+                            cout << "There is no such CS";
+                            break;
+                        }
+
+                    }
                 }
                 if (edit == 3) {
                     cout << "1. identifier of one CS you want to delete 2.delete some CS" << endl;
@@ -416,7 +431,7 @@ int main()
                         cout << iddcs;
                         cout << "Enter id of CS you want to delete" << endl;
                         int n;
-                        n = correctnumber(0, CS::max_idd-1);
+                        n = correctnumber(0, CS::max_idd - 1);
                         while (iddcs.find(n) == iddcs.end()) {
                             cout << "There is no such cs" << endl;
                             n = correctnumber(0, CS::max_idd - 1);
@@ -447,26 +462,33 @@ int main()
                                     cout << "There is no such CS" << endl;
                                 }
                             }
-                            for (auto& i : idd)
-                                cs_group.erase(cs_group.find(i));
-
-                        }
-                        else {
-                            search_cs(cs_group, idcs);
-                            for (auto& i : idcs) {
+                            for (auto& i : idd) {
                                 cs_group.erase(cs_group.find(i));
                                 iddcs.erase(iddcs.find(i));
                             }
-                            
                         }
+                        else {
+                            search_cs(cs_group, idcs);
+                            if (idcs.size() != 0) {
+                                for (auto& i : idcs) {
+                                    cs_group.erase(cs_group.find(i));
+                                    iddcs.erase(iddcs.find(i));
+                                }
+                            }
+                            else {
+                                cout << "There is no such cs" << endl;
+                                break;
+
+                            }
+                        }
+                        cout << "CS was deleted";
                     }
-                    cout << "CS was deleted";
                 }
             }
-            else
-                cout << "There is no CS to edit" << endl;
-            break;
-        }
+                else
+                    cout << "There is no CS to edit" << endl;
+                break;
+            }
         case 6: {
             string x;
             cout << "Enter the name of file " << endl;
@@ -555,6 +577,7 @@ int main()
             break;
 
         }
-    }
+        }
+    
     return 0;
 } 
