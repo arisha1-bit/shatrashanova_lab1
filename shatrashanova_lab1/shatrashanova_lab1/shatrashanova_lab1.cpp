@@ -5,46 +5,17 @@
 #include <float.h>
 #include <unordered_map>
 #include <unordered_set>
-#include "header.h"
+#include "cs.h"
+#include "pipe.h"
+#include "checking.h"
 using namespace std;
-string status_check(bool x)
-{
-    if (x == true)
-        return ("Pipe works");
-    else if (x == false)
-        return ("Pipe is repairing");
-}
-template <typename T>
-T correctnumber(T min, T max) {
-    T x;
-    while (((cin>>x).fail()) || (cin.peek() != '\n') || (x < min) || (x > max)) {
-        cout << "Error!!! Input numeric value >= " << min << " and =< " << max<<endl;
-        cin.clear();
-        cin.ignore(INT_MAX, '\n');
-    }
-    return x;
-}
-template <typename T>
-using filter_p = bool (*) (Pipe& p, T par);
-template <typename T>
-using filter_cs = bool(*) (CS& cs, T par);
-template <typename T>
-vector <int> search_p_by_parametr(unordered_map <int, Pipe>& pipe_group, filter_p<T> f, T par) {
-    vector <int> id;
+void information(unordered_map<int, Pipe>& pipe_group, unordered_map<int, CS>& cs_group) {
     for (auto& pipe : pipe_group) {
-        if (f(pipe.second, par))
-            id.push_back(pipe.second.get_id());
+        cout << pipe.second << endl;
     }
-    return id;
-}
-template <typename T>
-vector <int> search_cs_by_parametr(unordered_map <int, CS>& cs_group, filter_cs<T> f, T par) {
-    vector <int> id;
     for (auto& cs : cs_group) {
-        if (f(cs.second, par))
-            id.push_back(cs.second.get_idd());
+        cout << cs.second << endl;
     }
-    return id;
 }
 bool check_p_name(Pipe& p, string name) {
     return (p.name.find(name) != string::npos);
@@ -58,60 +29,8 @@ bool check_cs_name(CS& cs, string name) {
 bool check_unworking(CS& cs, double p) {
     return (cs.get_unused() >= p);
 }
-istream& operator>> (istream& in, Pipe& p)
-{
-    cout << "\n Index of pipe: " << p.idp;
-    cout << "\nInput name ";
-
-    cin.clear();
-    cin.ignore(INT_MAX, '\n');
-
-    getline(cin, p.name);
-    cout << "\nInput lenght ";
-    p.lenght = correctnumber(0.0, DBL_MAX);
-    cout << "\nInput diameter ";
-    p.diameter = correctnumber(0.0, DBL_MAX);
-    cout << "\nChoose status of pipe (0 if repairing, 1 if works) ";
-    p.status = correctnumber(0,1);
-    cout << status_check(p.status) << endl;
-    return in;
-}
-istream& operator>> (istream& in, CS& cs)
-{
-    cout << "\nIndex of cs: " << cs.idcs;
-    cout << "\nInput name ";
-    cin.clear();
-    cin.ignore(INT_MAX, '\n');
-    getline(cin, cs.name);
-    cout << "\nNumber of workshops ";
-    cs.workshop = correctnumber(0,INT_MAX);
-    cout << "\nNumber of working workshops ";
-    cs.working_workshop = correctnumber(0,cs.workshop);
-    cout << "\nEnter the effectiveness ";
-    cs.effectiveness = correctnumber(0, 100);
-    return in;
-}
-ostream& operator<< (ostream& out, Pipe& p) {
-            out << "\nIndex of pipe: " << p.idp << "\nPipe info: " << "\nName: " << p.name << "\nLenght: " 
-                << p.lenght << "\nDiameter : " << p.diameter
-                << "\nStatus: " << status_check(p.status) << endl;
-            return out;
-        }
-ostream& operator<< (ostream& out, CS& cs) {
-            out << "\nIndex of CS: " << cs.idcs << "\nCS info:\nName: " << cs.name << "\nNumber of workshops: " << cs.workshop
-                << "\nNumber of working workshops: " << cs.working_workshop << "\nEffectiveness: "
-                << cs.effectiveness << "%" << endl;
-            return out;
-}
-ostream& operator<< (ostream& out, unordered_set <int>& p) {
-    out << "Exiting id: ";
-    for (auto& i : p) {
-        out << i << " ";
-    }
-    out << endl;
-    return out;
-}
-void search_p(unordered_map <int, Pipe>& pipe_group, vector<int>& id) {
+vector<int> search_p(unordered_map <int, Pipe>& pipe_group) {
+    vector<int> ids;
     int x;
     cout << "Search pipe by 1.name 2.status" << endl;
     x = correctnumber(1, 2);
@@ -121,14 +40,15 @@ void search_p(unordered_map <int, Pipe>& pipe_group, vector<int>& id) {
         cin.clear();
         cin.ignore(INT_MAX, '\n');
         getline(cin, name);
-        id = search_p_by_parametr(pipe_group, check_p_name, name);
+        ids = search_p_by_parametr(pipe_group, check_p_name, name);
     }
     else {
         bool k;
         cout << "Enter status of pipe (0 if repairing, 1 if in work): " << endl;
         k = correctnumber(0, 1);
-        id = search_p_by_parametr(pipe_group, check_p_status, k);
+        ids = search_p_by_parametr(pipe_group, check_p_status, k);
     }
+    return ids;
 }
 void search_cs(unordered_map <int, CS>& cs_group, vector<int>& id) {
     int x;
@@ -151,50 +71,252 @@ void search_cs(unordered_map <int, CS>& cs_group, vector<int>& id) {
     }
 
 }
-void information(unordered_map<int, Pipe>& pipe_group, unordered_map<int,CS>& cs_group) {
-    for (auto& pipe : pipe_group) {
-        cout << pipe.second << endl;
+void edit(unordered_map<int,Pipe>& pipe_group) 
+{
+    if (pipe_group.size() != 0) {
+        cout << "1.Choose one pipe 2.Choose pipes 3.Delete pipe" << endl;;
+        int edit = correctnumber(1, 3);
+        if (edit == 1) {
+            cout << "1.Choose pipe to edit" << endl;
+            cout << pipe_group;
+            int id = correctnumber(0, (int)pipe_group.size());
+            if (pipe_group.find(id) != pipe_group.end()) {
+                pipe_group[id].edit_Pipe();
+                cout << "Pipe was edited" << endl;
+            }
+            else
+                cout << "There is no such pipe";
+        }
+        if (edit == 2) {
+            cout << "Choose pipes by 1.filter 2.id" << endl;
+            int x = correctnumber(1, 2);
+            if (x == 1) {
+                auto idp = search_p(pipe_group);
+                if (idp.size() != 0) {
+                    cout << "Enter new status (0 if repairing, 1 if works)" << endl;
+                    bool s;
+                    s = correctnumber(0, 1);
+                    for (auto& i : idp)
+                        pipe_group[i].status = s;
+                }
+
+                else {
+                    cout << "There is no such pipe";
+                   
+                }
+            }
+
+
+            if (x == 2) {
+                unordered_set <int> ids;
+                cout << pipe_group;
+                cout << "Enter the number of identifiers of pipe you want to edit" << endl;
+                int n;
+                int id;
+                n = correctnumber(1, (int)pipe_group.size());
+                cout << "Enter idetifiers of pipes" << endl;
+                for (int i = 0; ids.size() < n; i++) {
+                    id = correctnumber(0, Pipe::max_id - 1);
+                    if (pipe_group.find(id) != pipe_group.end()) {
+                        if (pipe_group.find(id) != pipe_group.end())
+                            ids.insert(id);
+                    }
+                    else
+                    {
+                        cout << "There is no such pipe" << endl;;
+                    }
+                }
+                cout << "Enter new status (0 if repairing, 1 if works)" << endl;
+                bool s;
+                s = correctnumber(0, 1);
+                for (auto& i : ids) {
+                    for (auto& i : ids)
+                        pipe_group[i].status = s;
+                }
+            }
+        }
+        if (edit == 3) {
+            cout << "1. identifier of one pipe you want to delete 2.delete some pipes" << endl;
+            int d;
+            d = correctnumber(1, 2);
+            if (d == 1) {
+                cout << pipe_group;
+                cout << "Enter id of pipe you want to delete" << endl;
+                int n;
+                n = correctnumber(0, Pipe::max_id - 1);
+                while (pipe_group.find(n) == pipe_group.end()) {
+                    cout << "There is no such pipe" << endl;
+                    n = correctnumber(0, Pipe::max_id - 1);
+                }
+                pipe_group.erase(pipe_group.find(n));
+            }
+
+            else {
+                unordered_set <int> ids;
+                cout << "1.delete by filter 2.delete by id" << endl;
+                int action = correctnumber(1, 2);
+                if (action == 2) {
+                    cout << pipe_group;
+                    cout << "Enter the number of pipe you want to edit" << endl;;
+                    int n = correctnumber(1, (int)pipe_group.size());
+                    cout << "Enter idetifiers of pipes" << endl;
+                    //for (int i = 0; i < y; i++)
+                    while (ids.size()<n)
+                    {
+                        int x = correctnumber(0, Pipe::max_id-1);
+                        if (pipe_group.find(x) != pipe_group.end())
+                            ids.insert(x);
+                        else
+                            cout << "There is no such pipe" << endl;
+                    }
+                    
+                    for (auto& id : ids) {
+                        pipe_group.erase(pipe_group.find(id));
+                    }
+                    
+                }
+
+                else {
+                    vector <int> idp  = search_p(pipe_group);
+                    if (idp.size() != 0) {
+                        for (auto& i : idp) {
+                            pipe_group.erase(pipe_group.find(i));
+                        }
+                        cout << "Pipe was deleted";
+                    }
+                    else {
+                        cout << "There is no such pipe";
+                        
+                    }
+
+                }
+            }
+            
+        }
     }
-    for (auto& cs : cs_group) {
-        cout << cs.second << endl;
+
+
+
+    else
+        cout << "There is no pipe to edit" << endl;
+}
+void editcs(unordered_map<int, CS>& cs_group) {
+    vector <int> idcs;
+    if (cs_group.size() != 0) {
+        cout << "1.Edit one CS 2.Edit CSs 3.Delete CS" << endl;
+        int edit;
+        int x;
+        edit = correctnumber(1, 3);
+        if (edit == 1) {
+            int id;
+            cout << cs_group;
+            cout << "Choose CS to edit" << endl;
+            id = correctnumber(0, (int)cs_group.size());
+            if (cs_group.find(id) != cs_group.end()) {
+                cs_group[id].edit_cs();
+                cout << "CS was edited";
+            }
+        }
+        if (edit == 2) {
+            unordered_set <int> idw;
+            cout << "Choose  by 1.filter 2.id" << endl;
+            int n;
+            n = correctnumber(1, 2);
+            if (n == 2) {
+                cout << cs_group;
+                cout << "Enter the number of cs you want to edit" << endl;
+                int y;
+                y = correctnumber(1, (int)cs_group.size());
+                cout << "Enter idetifiers of CSs" << endl;
+                for (int i = 0; idw.size() < y; i++) {
+                    cin >> x;
+                    if (cs_group.find(x) != cs_group.end())
+                        idw.insert(x);
+                    else {
+                        
+                        cout << "There is no such cs" << endl;
+                    }
+                }
+                for (auto& id : idw)
+
+                    cs_group[id].edit_cs();
+            }
+
+            else {
+                search_cs(cs_group, idcs);
+                if (idcs.size() != 0) {
+                    for (auto& i : idcs)
+                        cs_group[i].edit_cs();
+                }
+
+                else {
+                    cout << "There is no such CS";
+                    
+                }
+
+            }
+        }
+        if (edit == 3) {
+            cout << "1. identifier of one CS you want to delete 2.delete some CS" << endl;
+            int d;
+            d = correctnumber(1, 2);
+            if (d == 1) {
+                cout << cs_group;
+                cout << "Enter id of CS you want to delete" << endl;
+                int n;
+                n = correctnumber(0, CS::max_idd - 1);
+                while (cs_group.find(n) == cs_group.end()) {
+                    cout << "There is no such cs" << endl;
+                    n = correctnumber(0, CS::max_idd - 1);
+                }
+                cs_group.erase(cs_group.find(n));
+
+            }
+            else {
+                unordered_set <int> idd;
+                cout << "1.delete by filter 2.delete by id" << endl;
+                int n;
+                n = correctnumber(1, 2);
+                if (n == 2) {
+                    cout << cs_group;
+                    cout << "Enter the number of cs you want to edit" << endl;
+                    int y;
+                    int x;
+                    y = correctnumber(1, (int)cs_group.size());
+                    cout << "Enter idetifiers of CSs" << endl;
+                    for (int i = 0; i < y; i++) {
+                        x = correctnumber(0, CS::max_idd);
+                        if (cs_group.find(x) != cs_group.end())
+                            idd.insert(x);
+                        else
+                        {
+                            i = i - 1;
+                            cout << "There is no such CS" << endl;
+                        }
+                    }
+                    for (auto& i : idd) {
+                        cs_group.erase(cs_group.find(i));
+                    }
+                }
+                else {
+                    search_cs(cs_group, idcs);
+                    if (idcs.size() != 0) {
+                        for (auto& i : idcs) {
+                            cs_group.erase(cs_group.find(i));
+                        }
+                    }
+                    else {
+                        cout << "There is no such cs" << endl;
+                        
+
+                    }
+                }
+                
+            }
+        }
     }
-}
-void CS::edit_cs() {
-    cout << "Workshops: " << workshop << endl;
-    cout << "Working workshop: " << working_workshop << endl;
-    cout << "Enter new number of working workshops" << endl;
-    working_workshop = correctnumber(0, workshop);
-}
-void Pipe::edit_Pipe() {
-    cout << "Status: " << status_check(status) << endl;
-    cout << "Enter new status of pipe (0 if in repairing, 1 if works)" << endl;
-    status = correctnumber(0,1);
-    cout << status_check(status) << endl;;
-}
- void Pipe::save_pipe(ofstream& file) {
-    file << idp << endl << name << endl << lenght << endl << diameter << endl << status << endl;
-}
-void CS::save_cs(ofstream& file) {
-    file << idcs << endl << name << endl
-        << workshop << endl << working_workshop << endl << effectiveness << endl;
-}
-void Pipe::load_pipe(ifstream& file) {
-    file >> idp;
-    getline(file, name);
-    getline(file, name);
-    file >> lenght;
-    file >> diameter;
-    file >> status;
-    iddp.insert(idp);
-}
-void CS::load_cs(ifstream& file) {
-    file >> idcs;
-    iddcs.insert(idcs);
-    getline(file, name);
-    getline(file, name); 
-    file >> workshop;
-    file >> working_workshop;
-    file >> effectiveness;
+    else
+        cout << "There is no CS to edit" << endl;
 }
 int main()
 {
@@ -207,17 +329,15 @@ int main()
         option = correctnumber(0, 9);
         switch (option) {
         case 1: {
-            iddp.insert(Pipe::max_id);
             Pipe p;
             cin >> p;
             pipe_group.insert({ p.get_id(), p });
             break;
         }
         case 2: {
-            iddcs.insert(CS::max_idd);
             CS cs;
             cin >> cs;
-            cs_group.insert({ cs.get_idd(), cs });
+            cs_group.insert({ cs.get_id(), cs });
             break;
         }
         case 3: {
@@ -225,268 +345,11 @@ int main()
             break;
         }
         case 4: {
-            int edit;
-            int id1;
-            int x;
-            vector <int> idp;
-            if (pipe_group.size() != 0) {
-                cout << "1.Choose one pipe 2.Choose pipes 3.Delete pipe" << endl;;
-                edit = correctnumber(1, 3);
-                if (edit == 1) {
-                    cout << "1.Choose pipe to edit" << endl;
-                    cout << iddp;
-                    id1 = correctnumber(0, (int)pipe_group.size());
-                    if (iddp.find(id1) != iddp.end()) {
-                        pipe_group[id1].edit_Pipe();
-                        cout << "Pipe was edited" << endl;
-                    }
-                    else
-                        cout << "There is no such pipe";
-                }
-                if (edit == 2) {
-                    vector <int> idp;
-                    cout << "Choose pipes by 1.filter 2.id" << endl;
-                    x = correctnumber(1, 2);
-                    if (x == 1) {
-                        search_p(pipe_group, idp);
-                        if (idp.size() != 0) {
-                            cout << "Enter new status (0 if repairing, 1 if works)" << endl;
-                            bool s;
-                            s = correctnumber(0, 1);
-                            for (auto& i : idp)
-                                pipe_group[i].status = s;
-                        }
-
-                        else {
-                            cout << "There is no such pipe";
-                            break;
-                        }
-                    }
-
-
-                    if (x == 2) {
-                        unordered_set <int> ids;
-                        cout << iddp;
-                        cout << "Enter the number of identifiers of pipe you want to edit" << endl;
-                        int n;
-                        int y;
-                        n = correctnumber(1, (int)pipe_group.size());
-                        cout << "Enter idetifiers of pipes" << endl;
-                        for (int i = 0; i < n; i++) {
-                            y = correctnumber(0, Pipe::max_id - 1);
-                            if (pipe_group.find(y) != pipe_group.end()) {
-                                if (iddp.find(y) != iddp.end())
-                                    ids.insert(y);
-                            }
-                            else
-                            {
-                                cout << "There is no such pipe" << endl;;
-                                i = i - 1;
-                            }
-                        }
-                        cout << "Enter new status (0 if repairing, 1 if works)" << endl;
-                        bool s;
-                        s = correctnumber(0, 1);
-                        for (auto& i : ids) {
-                            for (auto& i : ids)
-                                pipe_group[i].status = s;
-                        }
-                    }
-                }
-                if (edit == 3) {
-                    cout << "1. identifier of one pipe you want to delete 2.delete some pipes" << endl;
-                    int d;
-                    d = correctnumber(1, 2);
-                    if (d == 1) {
-                        cout << iddp;
-                        cout << "Enter id of pipe you want to delete" << endl;
-                        int n;
-                        n = correctnumber(0, Pipe::max_id - 1);
-                        while (iddp.find(n) == iddp.end()) {
-                            cout << "There is no such pipe" << endl;
-                            n = correctnumber(0, Pipe::max_id - 1);
-                        }
-                        pipe_group.erase(pipe_group.find(n));
-                        iddp.erase(iddp.find(n));
-                    }
-
-                    else {
-                        unordered_set <int> id;
-                        cout << "1.delete by filter 2.delete by id" << endl;
-                        int n;
-                        n = correctnumber(1, 2);
-                        int x;
-                        if (n == 2) {
-                            cout << iddp;
-                            cout << "Enter the number of pipe you want to edit" << endl;;
-                            int y;
-                            y = correctnumber(1, (int)pipe_group.size());
-                            cout << "Enter idetifiers of pipes" << endl;
-                            for (int i = 0; i < y; i++) {
-                                x = correctnumber(0, Pipe::max_id);
-                                if (iddp.find(x) != iddp.end()) {
-                                    id.insert(x);
-
-                                }
-                                else
-                                {
-                                    i = i - 1;
-                                    cout << "There is no such pipe" << endl;
-
-
-                                }
-                            }
-                            for (auto& pi : id) {
-                                pipe_group.erase(pipe_group.find(pi));
-                                iddp.erase(iddp.find(pi));
-                            }
-                        }
-
-                        else {
-                            search_p(pipe_group, idp);
-                            if (idp.size() != 0) {
-                                for (auto& i : idp) {
-                                    pipe_group.erase(pipe_group.find(i));
-                                    iddp.erase(iddp.find(i));
-                                }
-                            }
-                            else {
-                                cout << "There is no such pipe";
-                                break;
-                            }
-
-                        }
-                    }
-                    cout << "Pipe was deleted";
-                }
-            }
-
-
-
-            else
-                cout << "There is no pipe to edit" << endl;
+            edit(pipe_group);
             break;
         }
         case 5: {
-            vector <int> idcs;
-            if (cs_group.size() != 0) {
-                cout << "1.Edit one CS 2.Edit CSs 3.Delete CS" << endl;
-                int edit;
-                int x;
-                edit = correctnumber(1, 3);
-                if (edit == 1) {
-                    int id;
-                    cout << iddcs;
-                    cout << "Choose CS to edit" << endl;
-                    id = correctnumber(0, (int)cs_group.size());
-                    if (iddcs.find(id) != iddcs.end()) {
-                        cs_group[id].edit_cs();
-                        cout << "CS was edited";
-                    }
-                }
-                if (edit == 2) {
-                    unordered_set <int> idw;
-                    cout << "Choose  by 1.filter 2.id" << endl;
-                    int n;
-                    n = correctnumber(1, 2);
-                    if (n == 2) {
-                        cout << iddcs;
-                        cout << "Enter the number of cs you want to edit" << endl;
-                        int y;
-                        y = correctnumber(1, (int)cs_group.size());
-                        cout << "Enter idetifiers of CSs" << endl;
-                        for (int i = 0; i < y; i++) {
-                            cin >> x;
-                            if (cs_group.find(x) != cs_group.end())
-                                idw.insert(x);
-                            else {
-                                i = i - 1;
-                                cout << "There is no such cs" << endl;
-                            }
-                        }
-                        for (auto& id : idw)
-
-                            cs_group[id].edit_cs();
-                    }
-
-                    else {
-                        search_cs(cs_group, idcs);
-                        if (idcs.size() != 0) {
-                            for (auto& i : idcs)
-                                cs_group[i].edit_cs();
-                        }
-
-                        else {
-                            cout << "There is no such CS";
-                            break;
-                        }
-
-                    }
-                }
-                if (edit == 3) {
-                    cout << "1. identifier of one CS you want to delete 2.delete some CS" << endl;
-                    int d;
-                    d = correctnumber(1, 2);
-                    if (d == 1) {
-                        cout << iddcs;
-                        cout << "Enter id of CS you want to delete" << endl;
-                        int n;
-                        n = correctnumber(0, CS::max_idd - 1);
-                        while (iddcs.find(n) == iddcs.end()) {
-                            cout << "There is no such cs" << endl;
-                            n = correctnumber(0, CS::max_idd - 1);
-                        }
-                        cs_group.erase(cs_group.find(n));
-                        iddcs.erase(iddcs.find(n));
-
-                    }
-                    else {
-                        unordered_set <int> idd;
-                        cout << "1.delete by filter 2.delete by id" << endl;
-                        int n;
-                        n = correctnumber(1, 2);
-                        if (n == 2) {
-                            cout << iddcs;
-                            cout << "Enter the number of cs you want to edit" << endl;
-                            int y;
-                            int x;
-                            y = correctnumber(1, (int)cs_group.size());
-                            cout << "Enter idetifiers of CSs" << endl;
-                            for (int i = 0; i < y; i++) {
-                                x = correctnumber(0, CS::max_idd);
-                                if (cs_group.find(x) != cs_group.end())
-                                    idd.insert(x);
-                                else
-                                {
-                                    i = i - 1;
-                                    cout << "There is no such CS" << endl;
-                                }
-                            }
-                            for (auto& i : idd) {
-                                cs_group.erase(cs_group.find(i));
-                                iddcs.erase(iddcs.find(i));
-                            }
-                        }
-                        else {
-                            search_cs(cs_group, idcs);
-                            if (idcs.size() != 0) {
-                                for (auto& i : idcs) {
-                                    cs_group.erase(cs_group.find(i));
-                                    iddcs.erase(iddcs.find(i));
-                                }
-                            }
-                            else {
-                                cout << "There is no such cs" << endl;
-                                break;
-
-                            }
-                        }
-                        cout << "CS was deleted";
-                    }
-                }
-            }
-                else
-                    cout << "There is no CS to edit" << endl;
+            editcs(cs_group);
                 break;
             }
         case 6: {
@@ -532,18 +395,17 @@ int main()
                 }
                 for (int i = 0; i < len2; i++) {
                     newCS.load_cs(file);
-                    cs_group.insert({ newCS.get_idd(),newCS });
-                    if (CS::max_idd <= newCS.get_idd())
-                        CS::max_idd = newCS.get_idd() + 1;
+                    cs_group.insert({ newCS.get_id(),newCS });
+                    if (CS::max_idd <= newCS.get_id())
+                        CS::max_idd = newCS.get_id() + 1;
 
                 }
             }
             break;
         }
         case 8: {
-            vector <int> x;
             if (pipe_group.size() != 0) {
-                search_p(pipe_group, x);
+                auto x = search_p(pipe_group);
                 if (x.size() != 0) {
                     for (auto& i : x)
                         cout << pipe_group[i] << endl;
@@ -575,7 +437,6 @@ int main()
         }
         default: cout << "Input correct number (0-7)";
             break;
-
         }
         }
     
