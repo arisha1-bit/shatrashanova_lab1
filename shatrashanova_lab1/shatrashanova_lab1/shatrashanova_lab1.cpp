@@ -50,8 +50,9 @@ vector<int> search_p(unordered_map <int, Pipe>& pipe_group) {
     }
     return ids;
 }
-void search_cs(unordered_map <int, CS>& cs_group, vector<int>& id) {
+vector<int> search_cs(unordered_map <int, CS>& cs_group) {
     int x;
+    vector <int> id;
     cout << "Search CS by 1.name 2.percentage of unused shops" << endl;
     x = correctnumber(1, 2);
     if (x == 1) {
@@ -69,7 +70,7 @@ void search_cs(unordered_map <int, CS>& cs_group, vector<int>& id) {
         k = correctnumber(0, 100);
         id = search_cs_by_parametr(cs_group, check_unworking, k);
     }
-
+    return id;
 }
 void edit(unordered_map<int,Pipe>& pipe_group) 
 {
@@ -160,7 +161,7 @@ void edit(unordered_map<int,Pipe>& pipe_group)
                     cout << "Enter the number of pipe you want to edit" << endl;;
                     int n = correctnumber(1, (int)pipe_group.size());
                     cout << "Enter idetifiers of pipes" << endl;
-                    //for (int i = 0; i < y; i++)
+                    
                     while (ids.size()<n)
                     {
                         int x = correctnumber(0, Pipe::max_id-1);
@@ -177,7 +178,7 @@ void edit(unordered_map<int,Pipe>& pipe_group)
                 }
 
                 else {
-                    vector <int> idp  = search_p(pipe_group);
+                    auto idp = search_p(pipe_group);
                     if (idp.size() != 0) {
                         for (auto& i : idp) {
                             pipe_group.erase(pipe_group.find(i));
@@ -243,9 +244,9 @@ void editcs(unordered_map<int, CS>& cs_group) {
             }
 
             else {
-                search_cs(cs_group, idcs);
-                if (idcs.size() != 0) {
-                    for (auto& i : idcs)
+                auto idp = search_cs(cs_group);
+                if (idp.size() != 0) {
+                    for (auto& i : idp)
                         cs_group[i].edit_cs();
                 }
 
@@ -299,9 +300,9 @@ void editcs(unordered_map<int, CS>& cs_group) {
                     }
                 }
                 else {
-                    search_cs(cs_group, idcs);
-                    if (idcs.size() != 0) {
-                        for (auto& i : idcs) {
+                    auto idp=search_cs(cs_group);
+                    if (idp.size() != 0) {
+                        for (auto& i : idp) {
                             cs_group.erase(cs_group.find(i));
                         }
                     }
@@ -418,9 +419,9 @@ int main()
             break;
         }
         case 9: {
-            vector <int> x;
+            
             if (cs_group.size() != 0) {
-                search_cs(cs_group, x);
+                auto x=search_cs(cs_group);
                 if (x.size() != 0) {
                     for (auto& i : x)
                         cout << cs_group[i] << endl;
