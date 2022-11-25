@@ -140,12 +140,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Class.cpp" />
     <ClCompile Include="cs.cpp" />
     <ClCompile Include="shatrashanova_lab1.cpp" />
     <ClCompile Include="checking.h" />
     <ClCompile Include="pipe.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="graph.h" />
     <ClInclude Include="cs.h" />
     <ClInclude Include="pipe.h" />
   </ItemGroup>

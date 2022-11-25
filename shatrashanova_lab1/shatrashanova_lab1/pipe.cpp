@@ -7,12 +7,14 @@
 #include <unordered_map>
 #include <unordered_set>
 #include "checking.h"
+#include "graph.h"
 using namespace std;
+System s;
 string status_check(bool x)
 {
     if (x == true)
         return ("Pipe works");
-    else if (x == false)
+    else
         return ("Pipe is repairing");
 }
 int Pipe::max_id = 0;
@@ -20,10 +22,9 @@ istream& operator>> (istream& in, Pipe& p)
 {
     cout << "\n Index of pipe: " << p.idp;
     cout << "\nInput name ";
-
+    s.pipe.insert(p.idp);
     cin.clear();
     cin.ignore(INT_MAX, '\n');
-
     getline(cin, p.name);
     cout << "\nInput lenght ";
     p.lenght = correctnumber(0.0, DBL_MAX);
@@ -57,3 +58,10 @@ void Pipe::edit_Pipe() {
     file >> diameter;
     file >> status;
 }
+ bool check_p_name(Pipe& p, string name) {
+     return (p.name.find(name) != string::npos);
+ }
+ bool check_p_status(Pipe& p, bool status) {
+     return (p.status == status);
+ }
+

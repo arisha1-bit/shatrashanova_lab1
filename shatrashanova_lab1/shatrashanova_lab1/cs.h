@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 #include <float.h>
+#include <unordered_set>
 using namespace std;
 class CS
 {
@@ -19,6 +20,7 @@ class CS
           int get_id() { return idcs; }
           double get_unused() { return (((double)workshop - (double)working_workshop) / (double)workshop) * 100; }
           string name = "";
+          int getwork() { return working_workshop; };
 
 
     private:

@@ -8,6 +8,7 @@
 #include <unordered_set>
 #include "pipe.h"
 #include "cs.h"
+#include "graph.h"
 using namespace std;
 template <typename T>
 T correctnumber(T min, T max) {
@@ -28,11 +29,10 @@ ostream& operator<< (ostream& out, unordered_map <int, T>& p) {
     out << endl;
     return out;
 }
-
 template <typename T>
-using filter_p = bool (*) (Pipe& p, T par);
+using filter_p = bool (*) (Pipe p, T par);
 template <typename T>
-using filter_cs = bool(*) (CS& cs, T par);
+using filter_cs = bool(*) (CS cs, T par);
 template <typename T>
 vector <int> search_p_by_parametr(unordered_map <int, Pipe>& pipe_group, filter_p<T> f, T par) {
     vector <int> id;
@@ -43,7 +43,7 @@ vector <int> search_p_by_parametr(unordered_map <int, Pipe>& pipe_group, filter_
     return id;
 }
 template <typename T>
-vector <int> search_cs_by_parametr(unordered_map <int, CS>& cs_group, filter_cs<T> f, T par) {
+vector <int> search_cs_by_parametr(unordered_map <int, CS>& cs_group,filter_cs<T> f, T par) {
     vector <int> id;
     for (auto& cs : cs_group) {
         if (f(cs.second, par))

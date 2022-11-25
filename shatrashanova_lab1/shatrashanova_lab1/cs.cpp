@@ -7,7 +7,9 @@
 #include <unordered_map>
 #include <unordered_set>
 #include "checking.h"
+#include "graph.h"
 using namespace std;
+System t;
 int CS::max_idd = 0;
 istream& operator>> (istream& in, CS& cs)
 {
