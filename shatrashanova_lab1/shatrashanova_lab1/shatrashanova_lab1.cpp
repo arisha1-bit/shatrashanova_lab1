@@ -97,28 +97,26 @@ int main()
                         int x = correctnumber(0, CS::max_idd);
                         cout << "Input the exiting CS" << endl;
                         int y = correctnumber(0, CS::max_idd);
-                        for (auto& i : network.graphs) {
-                            if ((i.second.id_entrance == x) and (i.second.id_exit == y)) {
-                                network.graphs.erase(network.graphs.find(i.first));
-                                break;
+                            while (x == y) {
+                                cout << "You can't disconnect same CS" << endl;
+                                y = correctnumber(0, CS::max_idd);
                             }
-                        }
+                            auto i = network.graphs.cbegin();
+                            while (i != network.graphs.cend()) {
+                                if (((*i).second.id_entrance == x) and ((*i).second.id_exit == y)) {
+                                    network.graphs.erase(i);
+                                    break;
+                                }
+                                i++;
+                            }
                     }
+                        
                     else
                         cout << "There is no any system" << endl;
-                    //auto i = network.graphs.cbegin();
-                    //while(i != network.graphs.cend()){
-                    //  if (((i*).second.id_entrance == x) and ((i*).second.id_exit==y){
-                    //      network.graphs.erase(i);
-                    //      break;
-                    //  }
-                    //  i++;
-                    //}
-
+                    
                 }
-           
             for (auto& [i, j] : network.graphs)
-                cout << j.id_entrance << " " << j.id_exit << " " << j.id_pipe << endl;
+                cout <<i<< j.id_entrance << " " << j.id_exit << " " << j.id_pipe << endl;
             break;
         }
         case 0: {

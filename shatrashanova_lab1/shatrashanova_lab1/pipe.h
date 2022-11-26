@@ -23,6 +23,7 @@ class Pipe
         void save_pipe(ofstream& file);
         void load_pipe(ifstream& file);
         int get_id() { return idp; }
+        double get_dia() { return diameter; }
 
     private:
         double lenght = 0, diameter = 0;

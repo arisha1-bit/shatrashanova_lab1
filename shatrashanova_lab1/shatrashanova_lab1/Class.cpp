@@ -380,6 +380,7 @@ ostream& operator<<(ostream& out, unordered_set<int> s) {
     return out;
 }
 istream& operator>> (istream& in, System& s) {
+    bool k = 1;
     System::Graph gr;
     cout << s.c_s;
     cout << "Choose CS (id) on entrance" << endl;
@@ -391,22 +392,57 @@ istream& operator>> (istream& in, System& s) {
     cout << s.c_s;
     cout << "Choose CS(id) on exit" << endl;
     gr.id_exit = correctnumber(0, INT_MAX);
-    while (s.cs_group.find(gr.id_exit) == s.cs_group.end()) {
-        cout << "There is no such CS, try again" << endl;
+    while (gr.id_exit == gr.id_entrance) {
+        cout << "You can't connect CS with itself" << endl;
         gr.id_exit = correctnumber(0, INT_MAX);
+        while (s.cs_group.find(gr.id_exit) == s.cs_group.end()) {
+            cout << "There is no such CS, try again" << endl;
+            gr.id_exit = correctnumber(0, INT_MAX);
+        }
     }
-    cout << s.pipe;
-    cout << "Choose Pipe(id) to connect" << endl;
-    gr.id_pipe = correctnumber(0, INT_MAX);
-    while (s.pipe_group.find(gr.id_pipe) == s.pipe_group.end()) {
-        cout << "There is no such pipe, try again" << endl;
-        gr.id_pipe = correctnumber(0, INT_MAX);
+    if (s.graphs.size() != 0) {
+        for (auto& i : s.graphs) {
+            if (i.second.id_entrance == gr.id_entrance and i.second.id_exit == gr.id_exit) {
+                cout << "This connection is already exists" << endl;
+                k = 0;
+            }
+        }
     }
-    for (auto& i : s.pipe) {
-        s.pipe.erase(s.pipe.find(gr.id_pipe));
-        break;
+    if (k) {
+        cout << "Choose diameter of pipe to connect: 500, 600 or 1400" << endl;
+        double dia_pipe = correctnumber(500.0, 1400.0);
+        int k;
+        for (auto& i : s.pipe_group) {
+            if (i.second.get_dia() == dia_pipe) {
+                k = i.first;
+                break;
+            }
+        }
+                while (s.pipe_group.find(k) == s.pipe_group.end()) {
+                    cout << "There is no such pipe, try again(1) or create it(2)" << endl;
+                    int choise = correctnumber(1, 2);
+                    if (choise == 2) {
+                        Pipe p;
+                        cin >> p;
+                        s.pipe_group.insert({ p.get_id(), p });
+                    }
+                    cout << "Choose diameter of pipe to connect: 500, 600 or 1400" << endl;
+                    dia_pipe = correctnumber(0.0, DBL_MAX);
+                    for (auto& i : s.pipe_group) {
+                        if (i.second.get_dia() == dia_pipe) {
+                            k = i.first;
+                            break;
+                        }
+
+                    }
+                }
+                gr.id_pipe = k;
+        
+        s.graphs.insert({ gr.id,gr });
     }
-    s.graphs.insert({gr.id,gr });
+    else {
+        return in;
+    }
     return in;
 
 }
