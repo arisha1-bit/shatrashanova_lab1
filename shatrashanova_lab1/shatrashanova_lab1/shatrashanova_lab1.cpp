@@ -116,7 +116,7 @@ int main()
                     
                 } 
             for (auto& [i, j] : network.graphs)
-                cout <<i<< j.id_entrance << " " << j.id_exit << " " << j.id_pipe << endl;
+                cout <<i<<") " << j.id_entrance << " " << j.id_exit << " " << j.id_pipe << endl;
             break;
         }
         case 0: {

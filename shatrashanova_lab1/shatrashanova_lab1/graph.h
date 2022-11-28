@@ -37,4 +37,10 @@ public:
 	friend ostream& operator<<(ostream& out, unordered_set<int> s);
 	unordered_map <int,Graph> graphs;
 	int check_pipe(int x);
+	bool checking(int x);
+	int edge(int x);
+	int check_graph(int x);
+	int check_existing(int x);
+	bool check_only(int x, int y);
+	bool check_cs(int x);
 };

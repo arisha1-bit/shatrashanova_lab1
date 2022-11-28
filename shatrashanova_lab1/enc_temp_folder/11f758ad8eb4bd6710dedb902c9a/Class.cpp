@@ -197,6 +197,7 @@ void System::editcs() {
                         if (check_cs(x)) {
                             idw.insert(x);
                         }
+                        else break;
                     }
                     else {
 
