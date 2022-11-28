@@ -114,7 +114,7 @@ int main()
                     else
                         cout << "There is no any system" << endl;
                     
-                }
+                } 
             for (auto& [i, j] : network.graphs)
                 cout <<i<< j.id_entrance << " " << j.id_exit << " " << j.id_pipe << endl;
             break;

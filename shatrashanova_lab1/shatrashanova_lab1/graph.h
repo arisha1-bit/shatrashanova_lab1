@@ -36,4 +36,5 @@ public:
 	friend istream& operator>> (istream& in, System& s);
 	friend ostream& operator<<(ostream& out, unordered_set<int> s);
 	unordered_map <int,Graph> graphs;
+	int check_pipe(int x);
 };

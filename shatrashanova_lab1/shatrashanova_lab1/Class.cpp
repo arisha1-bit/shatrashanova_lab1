@@ -372,6 +372,16 @@ void System::edit()
     else
         cout << "There is no pipe to edit" << endl;
 }
+int System::check_pipe(int x) {
+    int k = 0;
+    if (graphs.size() != 0) {
+        for (auto& i : graphs) {
+            if ((i.second.id_entrance == x) or (i.second.id_exit == x))
+                k++;
+        }
+    }
+    return k;
+}
 ostream& operator<<(ostream& out, unordered_set<int> s) {
     cout << "Free objects: ";
     for (auto& i : s)
@@ -385,6 +395,10 @@ istream& operator>> (istream& in, System& s) {
     cout << s.c_s;
     cout << "Choose CS (id) on entrance" << endl;
     gr.id_entrance = correctnumber(0, INT_MAX);
+    while (s.check_pipe(gr.id_entrance) >= s.cs_group[gr.id_entrance].getwork()) {
+        cout << "Too much connections for this CS, choose another one" << endl;
+        gr.id_entrance = correctnumber(0, INT_MAX);
+    }
     while (s.cs_group.find(gr.id_entrance) == s.cs_group.end()) {
         cout << "There is no such CS, try again" << endl;
         gr.id_entrance = correctnumber(0, INT_MAX);
@@ -392,6 +406,10 @@ istream& operator>> (istream& in, System& s) {
     cout << s.c_s;
     cout << "Choose CS(id) on exit" << endl;
     gr.id_exit = correctnumber(0, INT_MAX);
+    while (s.check_pipe(gr.id_exit) >= s.cs_group[gr.id_exit].getwork()) {
+        cout << "Too much connections for this CS, choose another one" << endl;
+        gr.id_entrance = correctnumber(0, INT_MAX);
+    }
     while (gr.id_exit == gr.id_entrance) {
         cout << "You can't connect CS with itself" << endl;
         gr.id_exit = correctnumber(0, INT_MAX);
@@ -411,11 +429,26 @@ istream& operator>> (istream& in, System& s) {
     if (k) {
         cout << "Choose diameter of pipe to connect: 500, 600 or 1400" << endl;
         double dia_pipe = correctnumber(500.0, 1400.0);
-        int k;
+        int k=-1;
         for (auto& i : s.pipe_group) {
             if (i.second.get_dia() == dia_pipe) {
-                k = i.first;
-                break;
+                if (s.graphs.size() != 0) {
+                    for (int j = i.first; j < s.graphs.size();j++) {
+                        if (s.graphs[j].id_pipe != i.first) {
+                            k = i.first;
+                        }
+                        else {
+                            k = -1;
+                            break;
+                        }
+                        
+                    }
+                }
+                else
+                {
+                    k = i.first;
+                    break;
+                }
             }
         }
                 while (s.pipe_group.find(k) == s.pipe_group.end()) {
@@ -430,8 +463,13 @@ istream& operator>> (istream& in, System& s) {
                     dia_pipe = correctnumber(0.0, DBL_MAX);
                     for (auto& i : s.pipe_group) {
                         if (i.second.get_dia() == dia_pipe) {
-                            k = i.first;
-                            break;
+                            for (auto& i : s.graphs) {
+                                if (i.second.id_pipe != dia_pipe) {
+
+                                    k = i.first;
+                                    break;
+                                }
+                            }
                         }
 
                     }
