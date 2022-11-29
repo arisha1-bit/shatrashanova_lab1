@@ -23,14 +23,12 @@ int main()
             Pipe p;
             cin >> p;
             network.pipe_group.insert({ p.get_id(), p });
-            network.pipe.insert(p.get_id());
             break;
         }
         case 2: {
             CS cs;
             cin >> cs;
             network.cs_group.insert({ cs.get_id(), cs });
-            network.c_s.insert(cs.get_id());
             break;
         }
         case 3: {
@@ -86,7 +84,7 @@ int main()
             cout << "1.Connect 2.Disconnect" << endl;
                 int choise = correctnumber(1, 2);
                 if (choise == 1){
-                    if ((network.c_s.size() < 2) or (network.pipe.size() < 1))
+                    if ((network.cs_group.size() < 2) or (network.pipe_group.size() < 1))
                         cout << "Not enough objects to create system" << endl;
                     else 
                         cin >> network;

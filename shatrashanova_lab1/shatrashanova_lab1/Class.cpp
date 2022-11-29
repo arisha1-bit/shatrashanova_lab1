@@ -22,6 +22,17 @@ bool System::check_only(int x, int y) {
         else return false;
     }
 }
+bool System::check_obj(int x) {
+    int k = 0;
+    for (auto& i : graphs) {
+        if (i.second.id_entrance == x or i.second.id_exit == x or i.second.id_pipe==x) {
+            k++;
+            cout << "You can't delete object in connection" << endl;
+        }
+    }
+    if (k == 0) return true;
+    else return false;
+}
 int System::Graph::max_idg = 0;
 bool System::checking(int x) {
     int n = 0;
@@ -146,7 +157,6 @@ void System::load() {
         for (int i = 0; i < len1; i++) {
             newP.load_pipe(file);
             pipe_group.insert({ newP.get_id(),newP });
-            pipe.insert(newP.get_id());
             if (Pipe::max_id <= newP.get_id())
                 Pipe::max_id = newP.get_id() + 1;
 
@@ -154,7 +164,6 @@ void System::load() {
         for (int i = 0; i < len2; i++) {
             newCS.load_cs(file);
             cs_group.insert({ newCS.get_id(),newCS });
-            c_s.insert(newCS.get_id());
             if (CS::max_idd <= newCS.get_id())
                 CS::max_idd = newCS.get_id() + 1;
 
@@ -174,10 +183,8 @@ void System::editcs() {
             cout << "Choose CS to edit" << endl;
             id = correctnumber(0, (int)cs_group.size());
             if (cs_group.find(id) != cs_group.end()) {
-                if (check_cs(id)) {
                     cs_group[id].edit_cs();
                     cout << "CS was edited";
-                }
             }
         }
         if (edit == 2) {
@@ -193,11 +200,10 @@ void System::editcs() {
                 cout << "Enter idetifiers of CSs" << endl;
                 for (int i = 0; idw.size() < y; i++) {
                     cin >> x;
-                    if (cs_group.find(x) != cs_group.end()) {
-                        if (check_cs(x)) {
+                    if (cs_group.find(x) != cs_group.end()) 
                             idw.insert(x);
-                        }
-                    }
+
+                    
                     else {
 
                         cout << "There is no such cs" << endl;
@@ -235,7 +241,8 @@ void System::editcs() {
                     cout << "There is no such cs" << endl;
                     n = correctnumber(0, CS::max_idd - 1);
                 }
-                cs_group.erase(cs_group.find(n));
+                if(check_obj(n))
+                    cs_group.erase(cs_group.find(n));
 
             }
             else {
@@ -245,22 +252,19 @@ void System::editcs() {
                 n = correctnumber(1, 2);
                 if (n == 2) {
                     cout << cs_group;
-                    cout << "Enter the number of cs you want to edit" << endl;
+                    cout << "Enter the number of cs you want to delete" << endl;
                     int y;
                     int x;
                     y = correctnumber(1, (int)cs_group.size());
                     cout << "Enter idetifiers of CSs" << endl;
-                    for (int i = 0; i < y; i++) {
+                    for (int i = 0; idd.size()<y; i++) {
                         x = correctnumber(0, CS::max_idd);
                         if (cs_group.find(x) != cs_group.end())
                             idd.insert(x);
-                        else
-                        {
-                            i = i - 1;
-                            cout << "There is no such CS" << endl;
-                        }
+                        else cout << "There is no such cs";
                     }
                     for (auto& i : idd) {
+                        if (check_obj(i))
                         cs_group.erase(cs_group.find(i));
                     }
                 }
@@ -268,6 +272,7 @@ void System::editcs() {
                     auto idp = search_cs();
                     if (idp.size() != 0) {
                         for (auto& i : idp) {
+                            if (check_obj(i))
                             cs_group.erase(cs_group.find(i));
                         }
                     }
@@ -283,17 +288,6 @@ void System::editcs() {
     }
     else
         cout << "There is no CS to edit" << endl;
-}
-bool System::check_cs(int x) {
-    int k = 0;
-    for (auto& i : graphs) {
-        if (i.second.id_entrance == x or i.second.id_exit == x) {
-            k++;
-            cout << "You can't delete or edit CS in connection" << endl;
-        }
-    }
-    if (k == 0) return true;
-    else return false;
 }
 void System::edit()
 {
@@ -371,6 +365,7 @@ void System::edit()
                     cout << "There is no such pipe" << endl;
                     n = correctnumber(0, Pipe::max_id - 1);
                 }
+                if (check_obj(n))
                 pipe_group.erase(pipe_group.find(n));
             }
 
@@ -394,6 +389,7 @@ void System::edit()
                     }
 
                     for (auto& id : ids) {
+                        if (check_obj(id))
                         pipe_group.erase(pipe_group.find(id));
                     }
 
@@ -403,6 +399,7 @@ void System::edit()
                     auto idp = search_p();
                     if (idp.size() != 0) {
                         for (auto& i : idp) {
+                            if (check_obj(i))
                             pipe_group.erase(pipe_group.find(i));
                         }
                         cout << "Pipe was deleted";
@@ -454,12 +451,12 @@ ostream& operator<<(ostream& out, unordered_set<int> s) {
 }
 istream& operator>> (istream& in, System& s) {
     System::Graph gr;
-    cout << s.c_s;
+    cout << s.cs_group;
     cout << "Choose CS (id) on entrance" << endl;
     gr.id_entrance = correctnumber(0, INT_MAX);
     gr.id_entrance = s.check_existing(gr.id_entrance);
     gr.id_entrance= s.check_graph(gr.id_entrance);
-    cout << s.c_s;
+    cout << s.cs_group;
     cout << "Choose CS(id) on exit" << endl;
     gr.id_exit = correctnumber(0, INT_MAX);
     while (gr.id_exit == gr.id_entrance) {

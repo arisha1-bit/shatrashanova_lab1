@@ -22,7 +22,6 @@ istream& operator>> (istream& in, Pipe& p)
 {
     cout << "\n Index of pipe: " << p.idp;
     cout << "\nInput name ";
-    s.pipe.insert(p.idp);
     cin.clear();
     cin.ignore(INT_MAX, '\n');
     getline(cin, p.name);

@@ -14,8 +14,6 @@ class System
 public:
 	unordered_map <int, Pipe> pipe_group;
 	unordered_map <int, CS> cs_group;
-	unordered_set<int> pipe;
-	unordered_set<int> c_s;
 	void information();
 	void save();
 	void load();
@@ -42,5 +40,5 @@ public:
 	int check_graph(int x);
 	int check_existing(int x);
 	bool check_only(int x, int y);
-	bool check_cs(int x);
+	bool check_obj(int x);
 };
