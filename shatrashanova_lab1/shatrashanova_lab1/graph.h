@@ -22,18 +22,18 @@ public:
 	void edit();
 	vector<int> search_p();
 	struct Graph {
-		static int max_idg;
-		int id;
-		Graph() {
-			id = max_idg++;
-		}
 		int id_entrance;
 		int id_exit;
 		int id_pipe;
 	};
+	void adjacencytable(unordered_map<int, System::Graph>&);
+	unordered_map <int, vector <Graph>> table;
 	friend istream& operator>> (istream& in, System& s);
 	friend ostream& operator<<(ostream& out, unordered_set<int> s);
 	unordered_map <int,Graph> graphs;
+	void topsort(int x, unordered_map<int, int>& visited, vector<int>& vertexes);
+	void sorting();
+	void sorted();
 	int check_pipe(int x);
 	bool checking(int x);
 	int edge(int x);

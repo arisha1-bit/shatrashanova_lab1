@@ -16,8 +16,8 @@ int main()
     int option = -1;
     while (option) {
         cout << "\nChoose option:\n 1.Add pipe 2.Add CS 3.View all objects " <<
-            "4.Edit pipe 5.Edit CS 6.Save 7.Load 8.Search pipe 9.Search CS 0.Exit 10.Create a gas transportation system\n";
-        option = correctnumber(0, 10);
+            "4.Edit pipe 5.Edit CS 6.Save 7.Load 8.Search pipe 9.Search CS 0.Exit 10.Create a gas transportation system 11.Sortirovka\n";
+        option = correctnumber(0, 11);
         switch (option) {
         case 1: {
             Pipe p;
@@ -115,6 +115,10 @@ int main()
                 } 
             for (auto& [i, j] : network.graphs)
                 cout <<i<<") " << j.id_entrance << " " << j.id_exit << " " << j.id_pipe << endl;
+            break;
+        }
+        case 11: {
+            network.sorting();
             break;
         }
         case 0: {

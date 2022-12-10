@@ -130,13 +130,11 @@ void System::save() {
         cout << "Error" << endl;
     else {
         file << pipe_group.size() << " " << cs_group.size() << endl;
-        for (auto pipe : pipe_group) {
+        for (auto pipe : pipe_group)
             pipe.second.save_pipe(file);
-        }
         for (auto cs : cs_group)
             cs.second.save_cs(file);
     }
-
 }
 void System::load() {
     string x;
