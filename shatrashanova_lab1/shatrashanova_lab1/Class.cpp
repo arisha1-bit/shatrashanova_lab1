@@ -120,6 +120,14 @@ void System::information() {
         cout << cs.second << endl;
     }
 }
+void System::Graph::save_edge(ofstream& file) {
+    file << id_entrance << endl << id_exit << endl << id_pipe << endl;
+}
+void System::Graph::load_edge(ifstream& file) {
+    file >> id_entrance;
+    file >> id_exit;
+    file >> id_pipe;
+}
 void System::save() {
     string x;
     cout << "Enter the name of file " << endl;
@@ -129,20 +137,23 @@ void System::save() {
     if (!file)
         cout << "Error" << endl;
     else {
-        file << pipe_group.size() << " " << cs_group.size() << endl;
+        file << pipe_group.size() << " " << cs_group.size() << " " << graphs.size() << endl;
         for (auto pipe : pipe_group) {
             pipe.second.save_pipe(file);
         }
         for (auto cs : cs_group)
             cs.second.save_cs(file);
+        for (auto edge : graphs)
+            edge.second.save_edge(file);
     }
 
 }
 void System::load() {
     string x;
-    int len1, len2;
+    int len1, len2, len3;
     Pipe newP;
     CS newCS;
+    Graph newGr;
     cout << "Enter the name of file  " << endl;
     cin >> x;
     ifstream file;
@@ -154,7 +165,7 @@ void System::load() {
         CS::max_idd = 0;
         pipe_group.clear();
         cs_group.clear();
-        file >> len1 >> len2;
+        file >> len1 >> len2 >> len3;
         for (int i = 0; i < len1; i++) {
             newP.load_pipe(file);
             pipe_group.insert({ newP.get_id(),newP });
@@ -168,6 +179,10 @@ void System::load() {
             if (CS::max_idd <= newCS.get_id())
                 CS::max_idd = newCS.get_id() + 1;
 
+        }
+        for (int i = 0; i < len3; i++) {
+            newGr.load_edge(file);
+            graphs.insert({ newGr.id_pipe,newGr });
         }
     }
 }

@@ -25,6 +25,8 @@ public:
 		int id_entrance;
 		int id_exit;
 		int id_pipe;
+		void save_edge(ofstream& file);
+		void load_edge(ifstream& file);
 	};
 	void adjacencytable(unordered_map<int, System::Graph>&);
 	unordered_map <int, vector <Graph>> table;

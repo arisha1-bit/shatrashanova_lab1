@@ -92,12 +92,15 @@ int main()
                 else {
                     if (network.graphs.size() != 0) {
                         cout << "Input the entering CS" << endl;
-                        int x = correctnumber(0, CS::max_idd);
+                        int x = correctnumber(0, INT_MAX);
+                        x=network.check_existing(x);
                         cout << "Input the exiting CS" << endl;
-                        int y = correctnumber(0, CS::max_idd);
+                        int y = correctnumber(0, INT_MAX);
+                        y=network.check_existing(y);
                             while (x == y) {
                                 cout << "You can't disconnect same CS" << endl;
-                                y = correctnumber(0, CS::max_idd);
+                                y = correctnumber(0, INT_MAX);
+                                y=network.check_existing(y);
                             }
                             auto i = network.graphs.cbegin();
                             while (i != network.graphs.cend()) {
